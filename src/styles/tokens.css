@@ -1,0 +1,264 @@
+/*
+ * Design tokens — generated from design.pen (Pencil MCP handoff).
+ * design.pen variables가 소스 오브 트루스입니다. 값을 직접 수정하지 마세요.
+ */
+
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Typography · Spacing primitives ─────────────────────────────── */
+:root {
+  --font-family: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
+
+  --font-size-100: 12px;
+  --font-size-200: 14px;
+  --font-size-300: 16px;
+  --font-size-400: 20px;
+  --font-size-500: 24px;
+  --font-size-600: 28px;
+  --font-size-700: 32px;
+  --font-size-800: 36px;
+  --font-size-900: 40px;
+
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --font-line-height-tight: 1.2;
+  --font-line-height-normal: 1.4;
+  --font-letter-spacing: -0.02em; /* 공통 자간 -2% */
+
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+}
+
+/* ── Primitive color tokens ──────────────────────────────────────── */
+@theme {
+  /* Brand / Orange */
+  --color-brand-50: #FFF4ED;
+  --color-brand-100: #FFE4D5;
+  --color-brand-200: #FFC5A8;
+  --color-brand-300: #FF9D73;
+  --color-brand-400: #FF7A47;
+  --color-brand-500: #FF6B35;
+  --color-brand-600: #E84F1E;
+  --color-brand-700: #BF3B16;
+  --color-brand-800: #993218;
+  --color-brand-900: #7C2E19;
+  --color-brand-950: #431407;
+
+  /* Neutral / Warm Paper */
+  --color-neutral-50: #FFFDF7;
+  --color-neutral-100: #F7F1E8;
+  --color-neutral-200: #E9E2DA;
+  --color-neutral-300: #CFC4B8;
+  --color-neutral-400: #A99E93;
+  --color-neutral-500: #79736D;
+  --color-neutral-600: #635E56;
+  --color-neutral-700: #4B463F;
+  --color-neutral-800: #2F2B26;
+  --color-neutral-900: #1F1F1F;
+  --color-neutral-950: #11100E;
+
+  /* Warning / Amber */
+  --color-amber-50: #FFF8E6;
+  --color-amber-100: #FFEFC2;
+  --color-amber-200: #FFD980;
+  --color-amber-300: #FEC84B;
+  --color-amber-400: #F4A61D;
+  --color-amber-500: #D98200;
+  --color-amber-600: #B86400;
+  --color-amber-700: #8F4A00;
+  --color-amber-800: #713B07;
+  --color-amber-900: #5A320A;
+  --color-amber-950: #301804;
+
+  /* Success / Sage */
+  --color-sage-50: #F2F8F3;
+  --color-sage-100: #DDEBDD;
+  --color-sage-200: #BDD8C0;
+  --color-sage-300: #93BD99;
+  --color-sage-400: #6EA376;
+  --color-sage-500: #5F8B68;
+  --color-sage-600: #516B58;
+  --color-sage-700: #3F5646;
+  --color-sage-800: #314237;
+  --color-sage-900: #26342C;
+  --color-sage-950: #132019;
+
+  /* Info / Teal */
+  --color-teal-50: #ECFDF9;
+  --color-teal-100: #CCFBF1;
+  --color-teal-200: #99F6E4;
+  --color-teal-300: #5EEAD4;
+  --color-teal-400: #2DD4BF;
+  --color-teal-500: #2A9D8F;
+  --color-teal-600: #0F8176;
+  --color-teal-700: #0F665F;
+  --color-teal-800: #11524D;
+  --color-teal-900: #13423F;
+  --color-teal-950: #062725;
+
+  /* Error / Red */
+  --color-red-50: #FEF2F2;
+  --color-red-100: #FEE2E2;
+  --color-red-200: #FECACA;
+  --color-red-300: #FCA5A5;
+  --color-red-400: #F87171;
+  --color-red-500: #EF4444;
+  --color-red-600: #DC2626;
+  --color-red-700: #B91C1C;
+  --color-red-800: #991B1B;
+  --color-red-900: #7F1D1D;
+  --color-red-950: #450A0A;
+
+  /* Overlay / White Alpha */
+  --color-alpha-white-0: #FFFFFF00;
+  --color-alpha-white-10: #FFFFFF1A;
+  --color-alpha-white-27: #FFFFFF44;
+  --color-alpha-white-60: #FFFFFF99;
+
+  /* Overlay / Black Alpha */
+  --color-alpha-black-0: #00000000;
+  --color-alpha-black-4: #4D24100A;
+  --color-alpha-black-5: #2D1A100D;
+  --color-alpha-black-9: #4B2A180D;
+  --color-alpha-black-13: #00000022;
+  --color-alpha-black-20: #A23A1833;
+  --color-alpha-black-30: #0000004D;
+  --color-alpha-black-50: #00000080;
+  --color-alpha-black-54: #0000008A;
+  --color-alpha-black-72: #000000B8;
+  --color-alpha-black-95: #000000F2;
+}
+
+/* ── Semantic color tokens (프리미티브 참조 전용) · Type scale ───── */
+@theme inline {
+  --font-sans: var(--font-family);
+
+  /* Text */
+  --color-text-brand: var(--color-brand-700);
+  --color-text-default: var(--color-neutral-900);
+  --color-text-error: var(--color-red-600);
+  --color-text-info: var(--color-teal-700);
+  --color-text-inverse: var(--color-neutral-50);
+  --color-text-muted: var(--color-neutral-600);
+  --color-text-on-brand: var(--color-neutral-50);
+  --color-text-on-error: var(--color-neutral-50);
+  --color-text-on-info: var(--color-neutral-50);
+  --color-text-on-success: var(--color-neutral-50);
+  --color-text-on-warning: var(--color-neutral-950);
+  --color-text-placeholder: var(--color-neutral-500);
+  --color-text-subtle: var(--color-neutral-500);
+  --color-text-success: var(--color-sage-700);
+  --color-text-warning: var(--color-amber-800);
+
+  /* Background */
+  --color-background-brand: var(--color-brand-500);
+  --color-background-brand-selected: var(--color-brand-50);
+  --color-background-brand-subtle: var(--color-brand-50);
+  --color-background-card: var(--color-neutral-50);
+  --color-background-default: var(--color-neutral-50);
+  --color-background-disabled: var(--color-neutral-300);
+  --color-background-error: var(--color-red-600);
+  --color-background-error-subtle: var(--color-red-50);
+  --color-background-info: var(--color-teal-600);
+  --color-background-info-subtle: var(--color-teal-50);
+  --color-background-inverse: var(--color-neutral-900);
+  --color-background-media-placeholder: var(--color-brand-100);
+  --color-background-muted: var(--color-neutral-200);
+  --color-background-screen: var(--color-neutral-50);
+  --color-background-screen-warm: var(--color-brand-50);
+  --color-background-scrim: var(--color-alpha-black-50);
+  --color-background-success: var(--color-sage-600);
+  --color-background-success-subtle: var(--color-sage-50);
+  --color-background-surface: var(--color-neutral-100);
+  --color-background-transparent: var(--color-alpha-white-0);
+  --color-background-warning: var(--color-amber-500);
+  --color-background-warning-subtle: var(--color-amber-50);
+
+  /* Border */
+  --color-border-brand: var(--color-brand-300);
+  --color-border-default: var(--color-neutral-200);
+  --color-border-error: var(--color-red-200);
+  --color-border-error-strong: var(--color-red-600);
+  --color-border-info: var(--color-teal-300);
+  --color-border-strong: var(--color-neutral-300);
+  --color-border-success: var(--color-sage-300);
+  --color-border-warning: var(--color-amber-300);
+
+  /* Icon */
+  --color-icon-brand: var(--color-brand-500);
+  --color-icon-default: var(--color-neutral-900);
+  --color-icon-error: var(--color-red-600);
+  --color-icon-inverse: var(--color-neutral-50);
+  --color-icon-muted: var(--color-neutral-400);
+
+  /* Overlay */
+  --color-overlay-hero-mark-muted: var(--color-alpha-white-60);
+  --color-overlay-photo-bottom-end: var(--color-alpha-black-54);
+  --color-overlay-photo-bottom-mid: var(--color-alpha-black-30);
+  --color-overlay-photo-bottom-start: var(--color-alpha-black-0);
+  --color-overlay-photo-dark-high: var(--color-alpha-black-72);
+  --color-overlay-photo-dark-low: var(--color-alpha-black-13);
+  --color-overlay-photo-dark-solid: var(--color-alpha-black-95);
+  --color-overlay-photo-light-mid: var(--color-alpha-white-10);
+  --color-overlay-photo-light-start: var(--color-alpha-white-27);
+
+  /* Shadow */
+  --color-shadow-brand: var(--color-alpha-black-20);
+  --color-shadow-card: var(--color-alpha-black-9);
+  --color-shadow-header: var(--color-alpha-black-4);
+  --color-shadow-soft: var(--color-alpha-black-5);
+
+  /* Type scale — text-display-lg … text-label-md 유틸리티 생성 */
+  --text-display-lg: var(--font-size-800); /* 36px */
+  --text-display-lg--line-height: var(--font-line-height-tight);
+  --text-display-lg--font-weight: var(--font-weight-bold);
+  --text-display-lg--letter-spacing: var(--font-letter-spacing);
+  --text-display-md: var(--font-size-700); /* 32px */
+  --text-display-md--line-height: var(--font-line-height-tight);
+  --text-display-md--font-weight: var(--font-weight-bold);
+  --text-display-md--letter-spacing: var(--font-letter-spacing);
+  --text-display-sm: var(--font-size-600); /* 28px */
+  --text-display-sm--line-height: var(--font-line-height-tight);
+  --text-display-sm--font-weight: var(--font-weight-bold);
+  --text-display-sm--letter-spacing: var(--font-letter-spacing);
+  --text-heading-lg: var(--font-size-500); /* 24px */
+  --text-heading-lg--line-height: var(--font-line-height-tight);
+  --text-heading-lg--font-weight: var(--font-weight-bold);
+  --text-heading-lg--letter-spacing: var(--font-letter-spacing);
+  --text-heading-md: var(--font-size-400); /* 20px */
+  --text-heading-md--line-height: var(--font-line-height-tight);
+  --text-heading-md--font-weight: var(--font-weight-bold);
+  --text-heading-md--letter-spacing: var(--font-letter-spacing);
+  --text-heading-sm: var(--font-size-300); /* 16px */
+  --text-heading-sm--line-height: var(--font-line-height-tight);
+  --text-heading-sm--font-weight: var(--font-weight-semibold);
+  --text-heading-sm--letter-spacing: var(--font-letter-spacing);
+  --text-body-lg: var(--font-size-300); /* 16px */
+  --text-body-lg--line-height: var(--font-line-height-normal);
+  --text-body-lg--font-weight: var(--font-weight-regular);
+  --text-body-lg--letter-spacing: var(--font-letter-spacing);
+  --text-body-md: var(--font-size-200); /* 14px */
+  --text-body-md--line-height: var(--font-line-height-normal);
+  --text-body-md--font-weight: var(--font-weight-regular);
+  --text-body-md--letter-spacing: var(--font-letter-spacing);
+  --text-label-lg: var(--font-size-200); /* 14px */
+  --text-label-lg--line-height: var(--font-line-height-normal);
+  --text-label-lg--font-weight: var(--font-weight-semibold);
+  --text-label-lg--letter-spacing: var(--font-letter-spacing);
+  --text-label-md: var(--font-size-100); /* 12px */
+  --text-label-md--line-height: var(--font-line-height-normal);
+  --text-label-md--font-weight: var(--font-weight-regular);
+  --text-label-md--letter-spacing: var(--font-letter-spacing);
+}
