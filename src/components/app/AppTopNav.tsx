@@ -16,6 +16,8 @@ export interface AppTopNavProps {
   rightIconTone?: TopNavigationIconTone;
   rightIconLabel?: string;
   rightHref?: string;
+  /** 우측 아이콘 클릭 시 이동 전에 실행할 동작(예: 작성 중이던 초안 비우기). */
+  onRightClick?: () => void;
 }
 
 /** DS TopNavigation에 라우팅만 연결한 앱 셸 래퍼입니다. */
@@ -28,6 +30,7 @@ export function AppTopNav({
   rightIconTone,
   rightIconLabel,
   rightHref,
+  onRightClick,
 }: AppTopNavProps) {
   const router = useRouter();
 
@@ -45,7 +48,14 @@ export function AppTopNav({
         rightIcon={rightIcon}
         rightIconTone={rightIconTone}
         rightIconLabel={rightIconLabel}
-        onRightClick={rightIcon && rightHref ? () => router.push(rightHref) : undefined}
+        onRightClick={
+          rightIcon && (rightHref || onRightClick)
+            ? () => {
+                onRightClick?.();
+                if (rightHref) router.push(rightHref);
+              }
+            : undefined
+        }
       />
     </header>
   );

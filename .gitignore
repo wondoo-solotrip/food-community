@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,3 +43,12 @@ next-env.d.ts
 
 *storybook.log
 storybook-static
+
+# 로컬 개발 도구 설정 (개인 환경 / 프로젝트 식별자 포함)
+.mcp.json
+.claude/settings.local.json
+
+# 디자인 참고용 스크린샷 — 앱 코드에서 참조하지 않는 작업 산출물
+/assets/
+/images/
+/public/images/

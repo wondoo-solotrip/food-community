@@ -211,7 +211,7 @@
                           "width": 154,
                           "height": 90,
                           "y": 112,
-                          "gap": 10
+                          "gap": "$spacing-8"
                         },
                         "Z9y5gl": {
                           "width": "fit_content(130)",
@@ -234,10 +234,10 @@
                         },
                         "rDtYa": {
                           "x": 20,
-                          "y": 29,
-                          "width": 130,
+                          "y": 27,
+                          "width": 134,
                           "enabled": true,
-                          "gap": 4
+                          "gap": "$spacing-8"
                         },
                         "rspEF": {
                           "name": "Location Icon",
@@ -285,7 +285,8 @@
                         "XXCwv": {
                           "width": 154,
                           "height": 90,
-                          "y": 112
+                          "y": 112,
+                          "gap": "$spacing-8"
                         },
                         "Z9y5gl": {
                           "width": "fit_content(130)",
@@ -308,10 +309,10 @@
                         },
                         "rDtYa": {
                           "x": 20,
-                          "y": 29,
-                          "width": 130,
+                          "y": 27,
+                          "width": 134,
                           "enabled": true,
-                          "gap": 4
+                          "gap": "$spacing-8"
                         },
                         "rspEF": {
                           "name": "Location Icon",
@@ -368,7 +369,8 @@
                         "XXCwv": {
                           "width": 154,
                           "height": 90,
-                          "y": 112
+                          "y": 112,
+                          "gap": "$spacing-8"
                         },
                         "Z9y5gl": {
                           "width": 130,
@@ -390,10 +392,10 @@
                         },
                         "rDtYa": {
                           "x": 20,
-                          "y": 29,
-                          "width": 130,
+                          "y": 27,
+                          "width": 134,
                           "enabled": true,
-                          "gap": 4
+                          "gap": "$spacing-8"
                         },
                         "rspEF": {
                           "name": "Location Icon",
@@ -440,7 +442,8 @@
                         "XXCwv": {
                           "width": 154,
                           "height": 90,
-                          "y": 112
+                          "y": 112,
+                          "gap": "$spacing-8"
                         },
                         "Z9y5gl": {
                           "width": 130,
@@ -462,10 +465,10 @@
                         },
                         "rDtYa": {
                           "x": 20,
-                          "y": 29,
-                          "width": 130,
+                          "y": 27,
+                          "width": 134,
                           "enabled": true,
-                          "gap": 4
+                          "gap": "$spacing-8"
                         },
                         "rspEF": {
                           "name": "Location Icon",
@@ -738,6 +741,397 @@
                       "fontWeight": "$font-weight-regular"
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "GEJDJ",
+          "name": "Detail Mini Map Section",
+          "width": "fill_container",
+          "fill": "$color-background-default",
+          "layout": "vertical",
+          "gap": "$spacing-16",
+          "padding": [
+            "$spacing-20",
+            "$spacing-20",
+            "$spacing-24",
+            "$spacing-20"
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "p81eRO",
+              "name": "Mini Map Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "eeNLX",
+                  "type": "ref",
+                  "ref": "E8hu2B",
+                  "name": "Mini Map Title / DS",
+                  "content": "위치",
+                  "fill": "$color-text-default",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "h9YGzA",
+                  "name": "Open Map Action",
+                  "gap": "$spacing-8",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "MtGkx",
+                      "type": "ref",
+                      "ref": "gQU5W",
+                      "name": "Open Naver Map Label / DS",
+                      "content": "네이버 지도에서 보기",
+                      "fill": "#03C75A",
+                      "width": 132,
+                      "textAlign": "right"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "yTqbi",
+                      "name": "Open Map Arrow Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "arrow-up-right",
+                      "library": "lucide",
+                      "fill": "#03C75A"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b7JWF",
+              "name": "Naver Map Embed",
+              "clip": true,
+              "width": "fill_container",
+              "height": 160,
+              "fill": "#E8EBED",
+              "cornerRadius": 12,
+              "stroke": "#D2D7DA",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "mHOmd",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Naver Map Raster Tile",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "images/generated-1784892587671.png",
+                    "mode": "fill"
+                  },
+                  "width": 320,
+                  "height": 160
+                },
+                {
+                  "type": "frame",
+                  "id": "yF50Y",
+                  "x": 8,
+                  "y": 8,
+                  "name": "Naver Map Layer Switch",
+                  "clip": true,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 4,
+                  "stroke": "#C9D0D4",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 3
+                  },
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "LQ8Gn",
+                      "name": "Naver Map Standard Selected",
+                      "fill": "#03C75A",
+                      "padding": [
+                        5,
+                        7
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yJdYq",
+                          "name": "Naver Map Standard Label",
+                          "fill": "#FFFFFF",
+                          "content": "일반",
+                          "fontFamily": "$font-family",
+                          "fontSize": 9,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GAYYW",
+                      "name": "Naver Map Satellite Option",
+                      "fill": "#FFFFFF",
+                      "padding": [
+                        5,
+                        7
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "q38Vv8",
+                          "name": "Naver Map Satellite Label",
+                          "fill": "#566169",
+                          "content": "위성",
+                          "fontFamily": "$font-family",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DRHVa",
+                  "x": 286,
+                  "y": 10,
+                  "name": "Naver Map Zoom Buttons",
+                  "width": 26,
+                  "height": 52,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 5,
+                  "stroke": "#C9D0D4",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 4
+                  },
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Ng1wG",
+                      "name": "Naver Map Zoom In Icon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "plus",
+                      "library": "lucide",
+                      "fill": "#3E4A52"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "EZTsE",
+                      "name": "Naver Map Zoom Out Icon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "minus",
+                      "library": "lucide",
+                      "fill": "#3E4A52"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zeg4g",
+                  "x": 111,
+                  "y": 94,
+                  "name": "Naver Map Place Label",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 5,
+                  "stroke": "#BCC5CA",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000026",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 6
+                  },
+                  "gap": 5,
+                  "padding": [
+                    6,
+                    9
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "uB9Ns",
+                      "name": "Naver Map Place Label Dot",
+                      "fill": "#03C75A",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "text",
+                      "id": "GH1uV",
+                      "name": "Naver Map Place Label Text",
+                      "fill": "#202428",
+                      "content": "딸기 케이크",
+                      "fontFamily": "$font-family",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "xcA4r",
+                  "x": 202,
+                  "y": 140,
+                  "name": "Naver Map Scale Text",
+                  "fill": "#44525A",
+                  "content": "1 km",
+                  "fontFamily": "$font-family",
+                  "fontSize": 7,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "fxDgo",
+                  "x": 190,
+                  "y": 151,
+                  "name": "Naver Map Scale Bar",
+                  "fill": "#44525A",
+                  "width": 50,
+                  "height": 1
+                },
+                {
+                  "type": "rectangle",
+                  "id": "iNPVr",
+                  "x": 190,
+                  "y": 146,
+                  "name": "Naver Map Scale Left Tick",
+                  "fill": "#44525A",
+                  "width": 1,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "id": "gx6sM",
+                  "x": 239,
+                  "y": 146,
+                  "name": "Naver Map Scale Right Tick",
+                  "fill": "#44525A",
+                  "width": 1,
+                  "height": 6
+                },
+                {
+                  "type": "text",
+                  "id": "i9S3kZ",
+                  "x": 251,
+                  "y": 148,
+                  "name": "Naver Map Copyright",
+                  "fill": "#44525A",
+                  "content": "© NAVER Corp.",
+                  "fontFamily": "$font-family",
+                  "fontSize": 7,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "path",
+                  "id": "tPvHD",
+                  "x": 149,
+                  "y": 50,
+                  "name": "Naver Official Default Marker",
+                  "geometry": "M11 0l-2 0-3 1-2 1-2 2-2 4 0 4 1 2 1 2 3 3 0 1 1 3 2 3 1 4 0 4 4 0 0-4 1-4 2-3 1-3 0-1 3-3 1-2 1-2 0-4-2-4-2-2-2-1-3-1z",
+                  "viewBox": [
+                    0,
+                    0,
+                    22,
+                    35
+                  ],
+                  "fill": "#11CC73",
+                  "width": 22,
+                  "height": 35,
+                  "stroke": "#FFFFFF",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "strokeLinejoin": "round",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000038",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 4
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "J9GKvG",
+                  "x": 156,
+                  "y": 57,
+                  "name": "Naver Official Marker White Core",
+                  "fill": "#FFFFFF",
+                  "width": 8,
+                  "height": 8
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lfcJu",
+              "name": "Mini Map Address Row",
+              "width": "fill_container",
+              "gap": "$spacing-8",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "p5hc6X",
+                  "name": "Mini Map Address Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "map-pin",
+                  "library": "lucide",
+                  "fill": "#03C75A"
+                },
+                {
+                  "id": "yihtP",
+                  "type": "ref",
+                  "ref": "a65Ia",
+                  "name": "Mini Map Address / DS",
+                  "content": "서울 강동구 성내동 123-4",
+                  "fill": "$color-text-muted",
+                  "width": "fill_container"
                 }
               ]
             }
@@ -1058,6 +1452,25 @@
                   }
                 }
               ]
+            },
+            {
+              "id": "grxUA",
+              "type": "ref",
+              "ref": "Xd5Qx",
+              "name": "Place Input Button",
+              "width": "fill_container",
+              "descendants": {
+                "l1POkj": {
+                  "icon": "map-pin",
+                  "fill": "$color-icon-inverse"
+                },
+                "Di7ui": {
+                  "content": "장소 입력하기"
+                },
+                "T53Gb": {
+                  "icon": "arrow-right"
+                }
+              }
             },
             {
               "id": "urzMa",
@@ -26395,8 +26808,8 @@
     {
       "type": "frame",
       "id": "RKwCW",
-      "x": 1320,
-      "y": 7655,
+      "x": 0,
+      "y": 6621,
       "name": "04 Login Page",
       "clip": true,
       "width": 360,
@@ -26719,8 +27132,8 @@
     {
       "type": "frame",
       "id": "Ii20b",
-      "x": 1760,
-      "y": 7655,
+      "x": 440,
+      "y": 6621,
       "name": "05 My Page",
       "clip": true,
       "width": 360,
@@ -27102,13 +27515,58 @@
                       ]
                     },
                     {
-                      "id": "dSXc5",
-                      "type": "ref",
-                      "ref": "xYFFL",
-                      "name": "Post Chevron 1",
-                      "width": 20,
-                      "height": 20,
-                      "fill": "$color-icon-muted"
+                      "type": "frame",
+                      "id": "Rk8zB",
+                      "name": "Post Actions 1",
+                      "height": 32,
+                      "gap": 2,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g574v",
+                          "name": "Edit Post Button 1",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$color-background-transparent",
+                          "cornerRadius": 6,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "UzGfh",
+                              "type": "ref",
+                              "ref": "k205A",
+                              "name": "Edit Post Icon 1",
+                              "width": 16,
+                              "height": 16,
+                              "fill": "$color-icon-default"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "JiGZu",
+                          "name": "Delete Post Button 1",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$color-background-transparent",
+                          "cornerRadius": 6,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "q7hNp",
+                              "type": "ref",
+                              "ref": "Qxz1h",
+                              "name": "Delete Post Icon 1",
+                              "width": 16,
+                              "height": 16,
+                              "fill": "$color-icon-error"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 },
@@ -27203,13 +27661,58 @@
                       ]
                     },
                     {
-                      "id": "mzGrT",
-                      "type": "ref",
-                      "ref": "xYFFL",
-                      "name": "Post Chevron 2",
-                      "width": 20,
-                      "height": 20,
-                      "fill": "$color-icon-muted"
+                      "type": "frame",
+                      "id": "LPVhO",
+                      "name": "Post Actions 2",
+                      "height": 32,
+                      "gap": 2,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rMYbd",
+                          "name": "Edit Post Button 2",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$color-background-transparent",
+                          "cornerRadius": 6,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "BDYfr",
+                              "type": "ref",
+                              "ref": "k205A",
+                              "name": "Edit Post Icon 2",
+                              "width": 16,
+                              "height": 16,
+                              "fill": "$color-icon-default"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "OO0ZF",
+                          "name": "Delete Post Button 2",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$color-background-transparent",
+                          "cornerRadius": 6,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "HKBa2",
+                              "type": "ref",
+                              "ref": "Qxz1h",
+                              "name": "Delete Post Icon 2",
+                              "width": 16,
+                              "height": 16,
+                              "fill": "$color-icon-error"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
@@ -27244,6 +27747,1347 @@
               "fill": "$color-text-brand"
             }
           }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "szoib",
+      "x": 1318,
+      "y": 7655,
+      "name": "06 Place Register Page",
+      "clip": true,
+      "width": 360,
+      "height": 796,
+      "fill": "$color-background-screen",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Sd2ko",
+          "name": "Register Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "fill": "$color-background-screen",
+          "padding": [
+            0,
+            "$spacing-20"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "r1KXz",
+              "name": "Register Status Time",
+              "fill": "$color-text-default",
+              "content": "9:41",
+              "fontFamily": "$font-family",
+              "fontSize": "$font-size-200",
+              "fontWeight": "$font-weight-semibold"
+            },
+            {
+              "type": "frame",
+              "id": "mpwYk",
+              "name": "Register Status Icons",
+              "gap": "$spacing-8",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "mFYrx",
+                  "name": "Register Signal Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                },
+                {
+                  "type": "icon",
+                  "id": "bG4zC",
+                  "name": "Register Wifi Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                },
+                {
+                  "type": "icon",
+                  "id": "qFfAz",
+                  "name": "Register Battery Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "battery",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "F3l4pL",
+          "type": "ref",
+          "ref": "ZQ02b",
+          "name": "Register Top Navigation",
+          "width": "fill_container",
+          "height": 56,
+          "descendants": {
+            "q8VqFr/XoEvc": {
+              "enabled": false
+            },
+            "QXDCK": {
+              "content": "장소 등록",
+              "fill": "$color-text-default",
+              "textAlign": "center"
+            },
+            "R8HA7F": {
+              "children": [
+                {
+                  "id": "cgvT5",
+                  "type": "ref",
+                  "ref": "GhpwI",
+                  "name": "Close Icon 24",
+                  "fill": "$color-icon-brand",
+                  "width": 24,
+                  "height": 24
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "sI0fl",
+          "name": "Register Body",
+          "width": "fill_container",
+          "height": 678,
+          "fill": "$color-background-screen",
+          "layout": "vertical",
+          "gap": "$spacing-20",
+          "padding": [
+            "$spacing-8",
+            0,
+            "$spacing-24",
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "f6GAt",
+              "type": "ref",
+              "ref": "OfKCM",
+              "name": "Place Search Field",
+              "width": 320,
+              "descendants": {
+                "cAghq": {
+                  "type": "frame",
+                  "id": "m1ev2n",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Search Label",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                },
+                "q14nW1": {
+                  "height": 48
+                },
+                "YuNxR": {
+                  "fill": "$color-icon-muted"
+                },
+                "bG9jy": {
+                  "content": "장소 또는 주소 검색",
+                  "fill": "$color-text-placeholder"
+                },
+                "qt6Qf": {
+                  "type": "frame",
+                  "id": "kzQk4",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Search Helper",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "u1TcyO",
+              "name": "Map Section",
+              "width": "fill_container",
+              "height": 396,
+              "layout": "vertical",
+              "gap": "$spacing-8",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "e93AWg",
+                  "name": "Map Preview",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 396,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "assets/naver-map-place.png",
+                    "mode": "fill"
+                  },
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "top": 1,
+                    "bottom": 1
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "soaZ4",
+                      "x": 0,
+                      "y": 118,
+                      "name": "Map Park Area",
+                      "enabled": false,
+                      "fill": "$color-sage-100",
+                      "width": 320,
+                      "height": 80
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "DJWrV",
+                      "x": 230,
+                      "y": 0,
+                      "name": "Map Water Area",
+                      "enabled": false,
+                      "fill": "$color-teal-50",
+                      "width": 90,
+                      "height": 198
+                    },
+                    {
+                      "type": "path",
+                      "id": "qO4hs",
+                      "x": 0,
+                      "y": 82,
+                      "name": "Map Main Road",
+                      "enabled": false,
+                      "geometry": "M0 16c70-8 116 18 176 1 54-15 102 5 144-3",
+                      "viewBox": [
+                        0,
+                        0,
+                        320,
+                        36
+                      ],
+                      "fill": "#00000000",
+                      "width": 320,
+                      "height": 32,
+                      "stroke": "$color-neutral-300",
+                      "strokeWidth": 12,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "C7anKV",
+                      "x": 42,
+                      "y": 0,
+                      "name": "Map Side Road",
+                      "enabled": false,
+                      "geometry": "M29 0c-11 42 11 82-1 122-10 30 2 56 6 76",
+                      "viewBox": [
+                        0,
+                        0,
+                        58,
+                        198
+                      ],
+                      "fill": "#00000000",
+                      "width": 58,
+                      "height": 198,
+                      "stroke": "$color-neutral-200",
+                      "strokeWidth": 8,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "uaWb9",
+                      "x": 118,
+                      "y": 0,
+                      "name": "Map Crossing Road",
+                      "enabled": false,
+                      "geometry": "M12 0c20 44 56 70 36 112-12 26 22 48 40 86",
+                      "viewBox": [
+                        0,
+                        0,
+                        95,
+                        198
+                      ],
+                      "fill": "#00000000",
+                      "width": 95,
+                      "height": 198,
+                      "stroke": "$color-neutral-200",
+                      "strokeWidth": 8,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "X9kHzH",
+                      "x": 134,
+                      "y": 70,
+                      "name": "Selected Pin Halo",
+                      "enabled": false,
+                      "fill": "#FF6B3533",
+                      "width": 52,
+                      "height": 52
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "T7ezX",
+                      "x": 148,
+                      "y": 82,
+                      "name": "Selected Pin",
+                      "enabled": false,
+                      "fill": "$color-background-brand",
+                      "width": 24,
+                      "height": 24,
+                      "stroke": "$color-neutral-50",
+                      "strokeWidth": 4
+                    },
+                    {
+                      "type": "frame",
+                      "id": "j7zCip",
+                      "x": 96,
+                      "y": 124,
+                      "name": "Map Place Label",
+                      "enabled": false,
+                      "width": 128,
+                      "height": 36,
+                      "fill": "$color-background-card",
+                      "cornerRadius": 8,
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "$color-shadow-card",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 12
+                      },
+                      "gap": 6,
+                      "padding": [
+                        8,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Xp1JF",
+                          "name": "Map Place Label Text",
+                          "fill": "$color-text-default",
+                          "content": "메세나폴리스",
+                          "fontFamily": "$font-family",
+                          "fontSize": "$font-size-200",
+                          "fontWeight": "$font-weight-semibold"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sDpzP",
+              "name": "Selected Address Section",
+              "width": 320,
+              "height": 56,
+              "layout": "vertical",
+              "gap": "$spacing-16",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "FyUkB",
+                  "name": "Selected Address Display",
+                  "metadata": {
+                    "type": "read-only-address",
+                    "placeholder": "검색 결과에서 선택한 위치의 주소가 표시됩니다."
+                  },
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$color-background-screen",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "gap": "$spacing-12",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Hco0d",
+                      "name": "Selected Address Pin",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "map-pin",
+                      "library": "lucide",
+                      "fill": "$color-icon-brand"
+                    },
+                    {
+                      "id": "Edlj1",
+                      "type": "ref",
+                      "ref": "a65Ia",
+                      "name": "Selected Address Text / DS",
+                      "content": "서울 마포구 양화로 45 메세나폴리스 1층",
+                      "fill": "$color-text-default",
+                      "width": "fill_container"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "X2EYZO",
+              "type": "ref",
+              "ref": "KHEW1",
+              "name": "Submit Place Button",
+              "width": 320,
+              "descendants": {
+                "sDJ5O": {
+                  "content": "이 위치로 등록하기"
+                },
+                "Q4LRu": {
+                  "enabled": false
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "lJoD0",
+      "x": 1754,
+      "y": 7655,
+      "name": "07 Place Search Results",
+      "clip": true,
+      "width": 360,
+      "height": 796,
+      "fill": "$color-background-screen",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "F2QBmH",
+          "name": "Register Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "fill": "$color-background-screen",
+          "padding": [
+            0,
+            "$spacing-20"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "CmQm0",
+              "name": "Register Status Time",
+              "fill": "$color-text-default",
+              "content": "9:41",
+              "fontFamily": "$font-family",
+              "fontSize": "$font-size-200",
+              "fontWeight": "$font-weight-semibold"
+            },
+            {
+              "type": "frame",
+              "id": "GdifO",
+              "name": "Register Status Icons",
+              "gap": "$spacing-8",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "cjsDd",
+                  "name": "Register Signal Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                },
+                {
+                  "type": "icon",
+                  "id": "Hmo8e",
+                  "name": "Register Wifi Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                },
+                {
+                  "type": "icon",
+                  "id": "M1Faj",
+                  "name": "Register Battery Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "battery",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LB6SR",
+          "type": "ref",
+          "ref": "ZQ02b",
+          "name": "Register Top Navigation",
+          "width": "fill_container",
+          "height": 56,
+          "descendants": {
+            "q8VqFr/XoEvc": {
+              "enabled": true,
+              "icon": "chevron-left",
+              "fill": "$color-icon-default"
+            },
+            "QXDCK": {
+              "content": "장소 검색",
+              "fill": "$color-text-default",
+              "textAlign": "center"
+            },
+            "R8HA7F": {
+              "children": [
+                {
+                  "id": "BpL1Q",
+                  "type": "ref",
+                  "ref": "GhpwI",
+                  "name": "Close Icon 24",
+                  "fill": "$color-icon-brand",
+                  "width": 24,
+                  "height": 24
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "WZIis",
+          "name": "Search Results Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$color-background-screen",
+          "layout": "vertical",
+          "gap": "$spacing-16",
+          "padding": [
+            "$spacing-12",
+            "$spacing-20",
+            "$spacing-24",
+            "$spacing-20"
+          ],
+          "children": [
+            {
+              "id": "sAwnG",
+              "type": "ref",
+              "ref": "Dp0Oa",
+              "name": "Focused Place Search Field / DS",
+              "width": "fill_container",
+              "descendants": {
+                "nTfDo": {
+                  "type": "frame",
+                  "id": "dj0Rx",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Search Label",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                },
+                "iZ9mm": {
+                  "height": 48
+                },
+                "NVgeK": {
+                  "fill": "$color-icon-brand"
+                },
+                "yyUBd": {
+                  "content": "망원동 티라미수",
+                  "fill": "$color-text-default"
+                },
+                "znlhy": {
+                  "type": "frame",
+                  "id": "wYoX5",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Search Helper",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "G10Z9f",
+              "name": "Search Meta Row",
+              "width": "fill_container",
+              "height": 28,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Jxztm",
+                  "name": "Result Count",
+                  "fill": "$color-text-default",
+                  "content": "검색 결과 3개",
+                  "fontFamily": "$font-family",
+                  "fontSize": "$font-size-200",
+                  "fontWeight": "$font-weight-semibold"
+                },
+                {
+                  "type": "frame",
+                  "id": "A2LKsS",
+                  "name": "Naver API Attribution",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ioo3B",
+                      "name": "Naver Mark",
+                      "width": 18,
+                      "height": 18,
+                      "fill": "#03C75A",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qzQJy",
+                          "name": "Naver N",
+                          "fill": "#FFFFFF",
+                          "content": "N",
+                          "fontFamily": "$font-family",
+                          "fontSize": 11,
+                          "fontWeight": "$font-weight-bold"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "AvCXl",
+                      "name": "Naver Local Search",
+                      "fill": "$color-text-subtle",
+                      "content": "네이버 지역검색",
+                      "fontFamily": "$font-family",
+                      "fontSize": "$font-size-100",
+                      "fontWeight": "$font-weight-regular"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RVcwC",
+              "name": "Place Search Result List",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$color-background-card",
+              "cornerRadius": 8,
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "id": "T1Qiz",
+                  "type": "ref",
+                  "ref": "AzVkC",
+                  "name": "Result / 카페 레이어드 망원 / DS",
+                  "width": "fill_container",
+                  "height": 76,
+                  "gap": "$spacing-12",
+                  "padding": [
+                    0,
+                    "$spacing-12"
+                  ],
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "descendants": {
+                    "HwyYg": {
+                      "type": "frame",
+                      "id": "yCwLh",
+                      "name": "Place Pin Background",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$color-background-brand-subtle",
+                      "cornerRadius": 18,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "SgbHp",
+                          "name": "Place Pin Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "map-pin",
+                          "library": "lucide",
+                          "fill": "$color-icon-brand"
+                        }
+                      ]
+                    },
+                    "I5K2jD": {
+                      "type": "frame",
+                      "id": "O92oe",
+                      "name": "Place Result Content",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qKc9x",
+                          "name": "Place Result Copy",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "id": "PtFfx",
+                              "type": "ref",
+                              "ref": "tEIMH",
+                              "name": "Place Name / DS",
+                              "content": "카페 레이어드 망원",
+                              "fill": "$color-text-default",
+                              "fontWeight": "$font-weight-semibold",
+                              "width": "fill_container"
+                            },
+                            {
+                              "id": "UdMIe",
+                              "type": "ref",
+                              "ref": "a65Ia",
+                              "name": "Road Address / DS",
+                              "content": "서울 마포구 희우정로 87",
+                              "fill": "$color-text-muted",
+                              "width": "fill_container"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "Js5UX",
+                          "type": "ref",
+                          "ref": "xYFFL",
+                          "name": "Result Chevron / DS",
+                          "width": 18,
+                          "height": 18,
+                          "fill": "$color-icon-muted"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "COxg7",
+                  "type": "ref",
+                  "ref": "AzVkC",
+                  "name": "Result / 마핑파 / DS",
+                  "width": "fill_container",
+                  "height": 76,
+                  "gap": "$spacing-12",
+                  "padding": [
+                    0,
+                    "$spacing-12"
+                  ],
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "descendants": {
+                    "HwyYg": {
+                      "type": "frame",
+                      "id": "CNzdf",
+                      "name": "Place Pin Background",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$color-background-brand-subtle",
+                      "cornerRadius": 18,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "eXG0N",
+                          "name": "Place Pin Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "map-pin",
+                          "library": "lucide",
+                          "fill": "$color-icon-brand"
+                        }
+                      ]
+                    },
+                    "I5K2jD": {
+                      "type": "frame",
+                      "id": "JUTv8",
+                      "name": "Place Result Content",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "PJS1z",
+                          "name": "Place Result Copy",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "id": "sy3DE",
+                              "type": "ref",
+                              "ref": "tEIMH",
+                              "name": "Place Name / DS",
+                              "content": "마핑파",
+                              "fill": "$color-text-default",
+                              "fontWeight": "$font-weight-semibold",
+                              "width": "fill_container"
+                            },
+                            {
+                              "id": "dZn4D",
+                              "type": "ref",
+                              "ref": "a65Ia",
+                              "name": "Road Address / DS",
+                              "content": "서울 마포구 포은로 74",
+                              "fill": "$color-text-muted",
+                              "width": "fill_container"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "pXkTW",
+                          "type": "ref",
+                          "ref": "xYFFL",
+                          "name": "Result Chevron / DS",
+                          "width": 18,
+                          "height": 18,
+                          "fill": "$color-icon-muted"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "M6DYc4",
+                  "type": "ref",
+                  "ref": "AzVkC",
+                  "name": "Result / 베러댄알콜 / DS",
+                  "width": "fill_container",
+                  "height": 76,
+                  "gap": "$spacing-12",
+                  "padding": [
+                    0,
+                    "$spacing-12"
+                  ],
+                  "descendants": {
+                    "HwyYg": {
+                      "type": "frame",
+                      "id": "g8Nkl4",
+                      "name": "Place Pin Background",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$color-background-brand-subtle",
+                      "cornerRadius": 18,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "W6iDtN",
+                          "name": "Place Pin Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "map-pin",
+                          "library": "lucide",
+                          "fill": "$color-icon-brand"
+                        }
+                      ]
+                    },
+                    "I5K2jD": {
+                      "type": "frame",
+                      "id": "V9fSZX",
+                      "name": "Place Result Content",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "MHhC3",
+                          "name": "Place Result Copy",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "id": "X1FTP",
+                              "type": "ref",
+                              "ref": "tEIMH",
+                              "name": "Place Name / DS",
+                              "content": "베러댄알콜",
+                              "fill": "$color-text-default",
+                              "fontWeight": "$font-weight-semibold",
+                              "width": "fill_container"
+                            },
+                            {
+                              "id": "Pj74v",
+                              "type": "ref",
+                              "ref": "a65Ia",
+                              "name": "Road Address / DS",
+                              "content": "서울 마포구 월드컵로13길 55",
+                              "fill": "$color-text-muted",
+                              "width": "fill_container"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "tWn0G",
+                          "type": "ref",
+                          "ref": "xYFFL",
+                          "name": "Result Chevron / DS",
+                          "width": 18,
+                          "height": 18,
+                          "fill": "$color-icon-muted"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "E8iOM",
+              "name": "Search Result Helper",
+              "width": "fill_container",
+              "gap": "$spacing-8",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "I188b",
+                  "type": "ref",
+                  "ref": "tMReK",
+                  "name": "Search Helper Info Icon / DS",
+                  "width": 16,
+                  "height": 16,
+                  "fill": "$color-icon-muted"
+                },
+                {
+                  "id": "vE7W8",
+                  "type": "ref",
+                  "ref": "UMx6q",
+                  "name": "Search Helper Text / DS",
+                  "content": "원하는 장소를 선택하면 지도에서 위치를 확인할 수 있어요.",
+                  "fill": "$color-text-subtle",
+                  "width": "fill_container"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "EcjzD",
+      "x": 2194,
+      "y": 7655,
+      "name": "08 Place Search Empty Direct Entry",
+      "clip": true,
+      "width": 360,
+      "height": 796,
+      "fill": "$color-background-screen",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "uwwD8",
+          "name": "Register Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "fill": "$color-background-screen",
+          "padding": [
+            0,
+            "$spacing-20"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Y9AA78",
+              "name": "Register Status Time",
+              "fill": "$color-text-default",
+              "content": "9:41",
+              "fontFamily": "$font-family",
+              "fontSize": "$font-size-200",
+              "fontWeight": "$font-weight-semibold"
+            },
+            {
+              "type": "frame",
+              "id": "vF8jP",
+              "name": "Register Status Icons",
+              "gap": "$spacing-8",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "p1Rjy7",
+                  "name": "Register Signal Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                },
+                {
+                  "type": "icon",
+                  "id": "tu2Vf",
+                  "name": "Register Wifi Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                },
+                {
+                  "type": "icon",
+                  "id": "T54kqS",
+                  "name": "Register Battery Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "battery",
+                  "library": "lucide",
+                  "fill": "$color-icon-default"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PRnHa",
+          "type": "ref",
+          "ref": "ZQ02b",
+          "name": "Register Top Navigation",
+          "width": "fill_container",
+          "height": 56,
+          "descendants": {
+            "q8VqFr/XoEvc": {
+              "enabled": true,
+              "icon": "chevron-left",
+              "fill": "$color-icon-default"
+            },
+            "QXDCK": {
+              "content": "장소 검색",
+              "fill": "$color-text-default",
+              "textAlign": "center"
+            },
+            "R8HA7F": {
+              "children": [
+                {
+                  "id": "mXOwR",
+                  "type": "ref",
+                  "ref": "GhpwI",
+                  "name": "Close Icon 24",
+                  "fill": "$color-icon-brand",
+                  "width": 24,
+                  "height": 24
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "dWpuc",
+          "name": "Empty Search Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$color-background-screen",
+          "layout": "vertical",
+          "gap": "$spacing-16",
+          "padding": [
+            "$spacing-12",
+            "$spacing-20",
+            "$spacing-24",
+            "$spacing-20"
+          ],
+          "children": [
+            {
+              "id": "VR0ss",
+              "type": "ref",
+              "ref": "Dp0Oa",
+              "name": "Focused Place Search Field / DS",
+              "width": "fill_container",
+              "descendants": {
+                "nTfDo": {
+                  "type": "frame",
+                  "id": "d8dghC",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Search Label",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                },
+                "iZ9mm": {
+                  "height": 48
+                },
+                "NVgeK": {
+                  "fill": "$color-icon-brand"
+                },
+                "yyUBd": {
+                  "content": "동네친구 키친",
+                  "fill": "$color-text-default"
+                },
+                "znlhy": {
+                  "type": "frame",
+                  "id": "w6GiTA",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Search Helper",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "Bxe0q",
+              "name": "Empty Search Attribution Row",
+              "width": "fill_container",
+              "height": 24,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lYCy1",
+                  "name": "Empty Naver API Attribution",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "tEUQ9",
+                      "name": "Empty Naver Mark",
+                      "width": 18,
+                      "height": 18,
+                      "fill": "#03C75A",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "U9YdRz",
+                          "name": "Empty Naver N",
+                          "fill": "#FFFFFF",
+                          "content": "N",
+                          "fontFamily": "$font-family",
+                          "fontSize": 11,
+                          "fontWeight": "$font-weight-bold"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "y4vyy",
+                      "name": "Empty Naver Local Search",
+                      "fill": "$color-text-subtle",
+                      "content": "네이버 지역검색",
+                      "fontFamily": "$font-family",
+                      "fontSize": "$font-size-100",
+                      "fontWeight": "$font-weight-regular"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "Ulcpr",
+              "type": "ref",
+              "ref": "R9zSCc",
+              "name": "No Results Empty State / DS",
+              "width": "fill_container",
+              "height": 190,
+              "descendants": {
+                "J59LL": {
+                  "width": 56,
+                  "height": 56,
+                  "fill": "$color-background-muted"
+                },
+                "BGnQr": {
+                  "fill": "$color-icon-muted"
+                },
+                "UJHmu": {
+                  "content": "검색 결과가 없어요"
+                },
+                "yDoFH": {
+                  "content": "검색어를 다시 확인하거나 아래에서 장소명을 직접 입력해 주세요."
+                },
+                "kVX41": {
+                  "type": "frame",
+                  "id": "mKRIl",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hidden Empty Actions",
+                  "enabled": false,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "S9dBC",
+              "name": "Direct Place Entry Section",
+              "width": "fill_container",
+              "fill": "$color-background-brand-subtle",
+              "cornerRadius": 8,
+              "stroke": "$color-border-brand",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": "$spacing-16",
+              "padding": "$spacing-16",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lhXyI",
+                  "name": "Direct Entry Heading Row",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "drGMp",
+                      "type": "ref",
+                      "ref": "gQU5W",
+                      "name": "Direct Entry Heading / DS",
+                      "content": "장소명 직접 입력",
+                      "fill": "$color-text-default",
+                      "width": 180
+                    },
+                    {
+                      "id": "r6vmWk",
+                      "type": "ref",
+                      "ref": "TX6WS",
+                      "name": "Address Free Badge / DS",
+                      "width": 92,
+                      "fill": "$color-background-card",
+                      "descendants": {
+                        "vseDe": {
+                          "content": "주소 없이 등록",
+                          "fill": "$color-text-brand"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "reyQe",
+                  "type": "ref",
+                  "ref": "OfKCM",
+                  "name": "Direct Place Name Field / DS",
+                  "width": "fill_container",
+                  "descendants": {
+                    "cAghq": {
+                      "content": "장소명",
+                      "fill": "$color-text-muted"
+                    },
+                    "q14nW1": {
+                      "height": 48
+                    },
+                    "YuNxR": {
+                      "enabled": false
+                    },
+                    "bG9jy": {
+                      "content": "동네친구 키친",
+                      "fill": "$color-text-default"
+                    },
+                    "qt6Qf": {
+                      "type": "frame",
+                      "id": "crKDd",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Hidden Direct Field Helper",
+                      "enabled": false,
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
+                  "id": "rToJj",
+                  "type": "ref",
+                  "ref": "KHEW1",
+                  "name": "Register Direct Place Button / DS",
+                  "width": "fill_container",
+                  "height": 48,
+                  "descendants": {
+                    "uUe4u": {
+                      "enabled": false
+                    },
+                    "sDJ5O": {
+                      "content": "장소명으로 등록하기"
+                    },
+                    "Q4LRu": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "A6vXy",
+              "name": "Direct Entry Notice",
+              "width": "fill_container",
+              "gap": "$spacing-8",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "Je7IV",
+                  "type": "ref",
+                  "ref": "tMReK",
+                  "name": "Direct Entry Notice Icon / DS",
+                  "width": 16,
+                  "height": 16,
+                  "fill": "$color-icon-muted"
+                },
+                {
+                  "id": "SaDrL",
+                  "type": "ref",
+                  "ref": "UMx6q",
+                  "name": "Direct Entry Notice Text / DS",
+                  "content": "직접 등록한 장소는 지도 위치가 표시되지 않아요.",
+                  "fill": "$color-text-subtle",
+                  "width": "fill_container"
+                }
+              ]
+            }
+          ]
         }
       ]
     }

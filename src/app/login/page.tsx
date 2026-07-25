@@ -1,17 +1,64 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Icon } from '@/components/foundation/Icon';
 import { Typography } from '@/components/foundation/Typography';
 import { Button } from '@/components/ui/Button';
+import { useSession } from '@/hooks/useSession';
+import { apiFetch } from '@/lib/api/client';
 
 const PREVIEW_IMAGE_URL =
   'https://images.unsplash.com/photo-1708388464803-d975f7d9a3d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
 
+/** 콜백 라우트가 실패 시 붙여 보내는 코드 → 사용자에게 보여줄 문구 */
+const CALLBACK_ERRORS: Record<string, string> = {
+  missing_code: '로그인이 취소되었어요. 다시 시도해 주세요.',
+  oauth_failed: '로그인 처리에 실패했어요. 잠시 후 다시 시도해 주세요.',
+};
+
 /** design.pen `04 Login Page` — 브랜드 인트로 + 맛집 프리뷰 + Google 로그인. */
 export default function LoginPage() {
+  // useSearchParams(콜백 에러 표시)를 쓰므로 프리렌더 경계를 둔다.
+  return (
+    <Suspense>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { session, loading } = useSession();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(
+    CALLBACK_ERRORS[searchParams.get('error') ?? ''] ?? null,
+  );
+
+  const next = searchParams.get('next') ?? '/';
+
+  // 이미 로그인된 상태로 진입하면 원래 가려던 곳으로 돌려보낸다.
+  useEffect(() => {
+    if (!loading && session?.user) router.replace(next);
+  }, [loading, session, router, next]);
+
+  /** BFF(/api/auth/google)에서 인가 URL만 받아오고, 리다이렉트만 브라우저가 수행한다. */
+  const handleGoogleLogin = async () => {
+    setPending(true);
+    setError(null);
+    try {
+      const { url } = await apiFetch<{ url: string }>('/api/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({ next }),
+      });
+      window.location.assign(url);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '로그인을 시작하지 못했습니다.');
+      setPending(false);
+    }
+  };
 
   return (
     <div className="flex min-h-dvh flex-1 flex-col bg-background-screen">
@@ -55,8 +102,14 @@ export default function LoginPage() {
             variant="primary"
             label="Google로 시작하기"
             className="w-full"
-            onClick={() => router.push('/')}
+            loading={pending}
+            onClick={handleGoogleLogin}
           />
+          {error && (
+            <p role="alert" className="text-center text-label-md text-text-error">
+              {error}
+            </p>
+          )}
           <p className="text-center text-label-md text-text-subtle">
             계속하면 커뮤니티 이용약관과 개인정보 처리방침에 동의하게 됩니다.
           </p>
