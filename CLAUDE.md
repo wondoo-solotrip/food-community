@@ -17,6 +17,26 @@ Storybook = 디자인 SSOT.
 - 브레이크포인트: 기본(모바일) 2열 → `md` 3열 → `xl` 4열.
 - 1280px 초과 시 그리드 확장 금지, 중앙 정렬 유지.
 
+# PWA 지침
+
+설치형(홈화면) 배포만 한다. 서비스워커·오프라인·푸시알림은 **넣지 않는다**.
+
+| 대상 | 파일 | 비고 |
+| --- | --- | --- |
+| 설치 정보 | `src/app/manifest.ts` | `/manifest.webmanifest` 로 나간다. link 태그는 Next 가 자동으로 붙인다 |
+| 메타 태그 | `src/app/layout.tsx` | `appleWebApp`(스플래시 포함) · `viewport.themeColor` |
+| iOS 스플래시 목록 | `src/lib/pwa/appleSplash.ts` | **생성 파일**. 손으로 고치지 말 것 |
+| 아이콘·스플래시 생성 | `scripts/generate-pwa-assets.py` | `npm run pwa:assets` (macOS 전용: `sips` + Pillow) |
+| 원본 로고 | `logo.svg` (repo 루트) | 2048×2048. 주황 심볼 + 워드마크 |
+
+- 자산은 전부 `logo.svg` 한 장에서 나온다. 로고가 바뀌면 파일만 갈아 끼우고 `npm run pwa:assets` 를 다시 돌린다. 개별 PNG 를 손으로 만들지 않는다.
+- 생성물: `src/app/favicon.ico`(16·32·48·64) · `src/app/icon.svg` · `src/app/apple-icon.png`(180) · `public/icons/icon-{192,512}.png` · `public/icons/icon-maskable-{192,512}.png` · `public/splash/apple-splash-*.png`(기기 20종 × 세로·가로).
+- 홈화면 아이콘은 **심볼만** 쓴다(워드마크는 작은 크기에서 뭉갠다). 스플래시는 로고 전체를 가운데 놓는다.
+- `background_color` · `theme_color` · 스플래시 배경은 모두 `#FFFDF7`(= `--color-background-screen`)로 맞춰 둔다. 스플래시 → 첫 화면에서 배경이 튀지 않게 하려는 것이니 앱 배경색을 바꾸면 이 값들도 같이 바꾼다.
+- favicon.ico 안의 PNG 는 RGBA 여야 한다. RGB 로 넣으면 Next 빌드가 `unable to decode image data` 로 죽는다.
+- iOS 는 manifest 로 스플래시를 만들어 주지 않아 기기 해상도마다 `apple-touch-startup-image` 를 붙여야 한다. 새 기기가 나오면 `APPLE_DEVICES` 에 (CSS 폭, 높이, DPR) 을 추가하고 스크립트를 다시 돌린다. 목록에 없는 기기는 배경색만 보인다(동작에는 지장 없음).
+- 서비스워커가 없어서 Android Chrome 은 정식 설치 프롬프트(WebAPK) 대신 `홈 화면에 추가` 바로가기만 제안할 수 있다. 의도된 선택이다.
+
 # 데이터 접근 지침 (BFF)
 
 모든 Supabase API는 **Next.js BFF를 경유**해서만 호출한다.
