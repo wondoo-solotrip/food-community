@@ -18,7 +18,8 @@ export function AppBottomNav({ selectedIndex }: AppBottomNavProps) {
   const router = useRouter();
 
   return (
-    <footer className="sticky bottom-0 z-10 border-t border-border-default bg-background-card">
+    // bottom offset — 설치 유도 띠가 떠 있으면 그 위로 올라선다(InstallPrompt 가 변수를 채운다).
+    <footer className="sticky bottom-[var(--install-bar-h,0px)] z-10 border-t border-border-default bg-background-card">
       {/* 배경/보더는 풀블리드, 탭 영역은 본문과 동일한 max-w-7xl 제한 */}
       <BottomNavigation
         className="mx-auto max-w-7xl border-t-0"

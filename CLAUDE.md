@@ -35,7 +35,8 @@ Storybook = 디자인 SSOT.
 - `background_color` · `theme_color` · 스플래시 배경은 모두 `#FFFDF7`(= `--color-background-screen`)로 맞춰 둔다. 스플래시 → 첫 화면에서 배경이 튀지 않게 하려는 것이니 앱 배경색을 바꾸면 이 값들도 같이 바꾼다.
 - favicon.ico 안의 PNG 는 RGBA 여야 한다. RGB 로 넣으면 Next 빌드가 `unable to decode image data` 로 죽는다.
 - iOS 는 manifest 로 스플래시를 만들어 주지 않아 기기 해상도마다 `apple-touch-startup-image` 를 붙여야 한다. 새 기기가 나오면 `APPLE_DEVICES` 에 (CSS 폭, 높이, DPR) 을 추가하고 스크립트를 다시 돌린다. 목록에 없는 기기는 배경색만 보인다(동작에는 지장 없음).
-- 서비스워커가 없어서 Android Chrome 은 정식 설치 프롬프트(WebAPK) 대신 `홈 화면에 추가` 바로가기만 제안할 수 있다. 의도된 선택이다.
+- 서비스워커는 설치 요건이 아니다(Chrome 108/데스크톱 112 에서 제거). manifest + HTTPS 만으로 Chromium 계열은 정식 설치가 된다.
+- 설치는 어떤 브라우저에서도 자동으로 되지 않는다. iOS 는 `공유 → 홈 화면에 추가` 수동뿐이고(`beforeinstallprompt` 미지원), Chromium 은 주소창 설치 아이콘·메뉴로 유도된다. 앱 안에 설치 버튼을 두려면 `beforeinstallprompt` 를 잡아 두었다가 눌렀을 때 `prompt()` 를 부른다.
 
 # 데이터 접근 지침 (BFF)
 

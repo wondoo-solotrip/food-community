@@ -6,4 +6,6 @@ body {
   color: var(--color-text-default);
   font-family: var(--font-family);
   letter-spacing: var(--font-letter-spacing);
+  /* 설치 유도 띠가 떠 있는 동안만 그만큼 아래를 비운다 — 값은 InstallPrompt 가 넣고 뺀다. */
+  padding-bottom: var(--install-bar-h, 0px);
 }

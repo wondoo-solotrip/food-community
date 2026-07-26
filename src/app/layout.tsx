@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { InstallPrompt } from "@/components/app/InstallPrompt";
 import { appleSplashScreens } from "@/lib/pwa/appleSplash";
 
 import "./globals.css";
@@ -34,7 +35,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <InstallPrompt />
+      </body>
     </html>
   );
 }
