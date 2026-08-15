@@ -49,7 +49,8 @@
 - `transaction_key`(= 포트원 `paymentId`, uuid)가 한 결제 건의 **그룹 키**다. 한 건의 결제·취소 행이 이 값으로 묶인다.
 - `amount` 부호 규칙: 결제 **+**, 취소 **-**. DB 제약 `payment_amount_sign_check` 가 강제한다. 값은 단건조회의 `amount.total` 을 쓴다(전액취소만 있어 취소 행은 `-amount.total`).
 - **중복결제 검증(2중)**: ① 기록 전에 같은 `(transaction_key, type)` 행을 조회해 있으면 웹훅 재전송으로 보고 끝낸다. ② 동시 수신이 ①을 같이 통과해도 유니크 인덱스 `payment_transaction_key_type_key` 가 막는다 — insert 가 23505 로 실패하면 이미 기록된 것으로 처리한다.
-- `payment_snapshot` 에 단건조회 응답 원본(jsonb)을 남기고 `payment.payment_snapshot_id` 가 가리킨다. 원장 insert 실패 시 방금 만든 스냅샷은 거둬들인다.
+- `payment_snapshot` 은 결제·상품 스냅샷을 나눠 담고 `payment.payment_snapshot_id` 가 가리킨다: `snapshot_payment` 에 단건조회 응답 원본(jsonb), `snapshot_product` 에 결제 시점의 `product` 행 전체(jsonb). 상품이 나중에 바뀌어도 결제 내역은 결제 시점 값을 보여주기 위한 것이다. 원장 insert 실패 시 방금 만든 스냅샷은 거둬들인다.
+- `snapshot_payment` 원본에는 PG 응답의 민감값(`pgResponse.secret` 등)이 들어 있다. 스냅샷 원본을 클라이언트에 그대로 내리지 않는다 — 화면에 필요한 필드만 서버에서 추려 응답한다.
 - RLS: `payment` · `payment_snapshot` 은 정책 없이 닫혀 있다. 웹훅은 사용자 세션이 없으므로 서비스 롤 클라이언트(`createSupabaseAdminClient`, `SUPABASE_SERVICE_ROLE_KEY`)로만 쓴다. 서비스 롤은 사용자 세션이 없는 서버 작업에만 쓰고, 요청 사용자 권한으로 처리할 수 있는 곳에는 쓰지 않는다.
 - **참여자 수 = 해당 상품의 PAYMENT 행 수 − CANCEL 행 수**(`countParticipants`). 서비스 키 미설정이면 0 으로 접고 경고 로그만 남긴다(서버가 죽지 않게 하는 네이버 키 방식).
 

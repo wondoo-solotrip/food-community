@@ -130,9 +130,10 @@ async function recordLedgerRow(payment: RecordablePayment, type: LedgerType): Pr
 
   const supabase = createSupabaseAdminClient();
 
+  // 전체 컬럼을 읽는다 — 위조 대조(name·price)뿐 아니라 결제 시점 상품 스냅샷(snapshot_product)으로도 쓴다.
   const { data: product, error: productError } = await supabase
     .from('product')
-    .select('id, name, price')
+    .select('*')
     .eq('id', customData.productId)
     .maybeSingle();
   if (productError) throw productError;
@@ -166,10 +167,14 @@ async function recordLedgerRow(payment: RecordablePayment, type: LedgerType): Pr
   if (existingError) throw existingError;
   if (existing) return;
 
-  // 단건조회 응답 원본을 스냅샷으로 남기고, 원장 행이 그 스냅샷을 가리키게 한다.
+  // 스냅샷을 남기고 원장 행이 가리키게 한다 — 결제는 단건조회 응답 원본(snapshot_payment),
+  // 상품은 결제 시점의 product 행(snapshot_product). 상품이 나중에 바뀌어도 결제 내역은 이 값을 보여준다.
   const { data: snapshot, error: snapshotError } = await supabase
     .from('payment_snapshot')
-    .insert({ value: payment as unknown as Json })
+    .insert({
+      snapshot_payment: payment as unknown as Json,
+      snapshot_product: product as unknown as Json,
+    })
     .select('id')
     .single();
   if (snapshotError) throw snapshotError;

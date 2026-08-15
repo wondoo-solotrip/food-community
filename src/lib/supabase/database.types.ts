@@ -66,17 +66,20 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          value: Json
+          snapshot_payment: Json
+          snapshot_product: Json
         }
         Insert: {
           created_at?: string
           id?: string
-          value: Json
+          snapshot_payment: Json
+          snapshot_product: Json
         }
         Update: {
           created_at?: string
           id?: string
-          value?: Json
+          snapshot_payment?: Json
+          snapshot_product?: Json
         }
         Relationships: []
       }
