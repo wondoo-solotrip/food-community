@@ -58,18 +58,19 @@ Storybook = 디자인 SSOT.
 | 클라이언트 → BFF | `src/lib/api/client.ts` | `apiFetch()` — `/api/*` 외 호출 차단 |
 | 응답 정규화 | `src/lib/api/response.ts` | `handleRoute` / `jsonOk` / `ApiError` |
 | 세션 갱신 | `src/proxy.ts`, `src/lib/supabase/session.ts` | 요청마다 토큰 갱신 |
-| Supabase 클라이언트 | `src/lib/supabase/server.ts` | 유일한 생성 지점 (`server-only`) |
-| 환경변수 | `src/lib/supabase/env.ts` | `SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_STORAGE_BUCKET` / `SUPABASE_PROFILE_IMAGE_BUCKET` / `SUPABASE_STORAGE_URL` |
+| Supabase 클라이언트 | `src/lib/supabase/server.ts` | 유일한 생성 지점 (`server-only`) — 세션용 `createSupabaseServerClient` + RLS 우회 서비스 롤 `createSupabaseAdminClient`(사용자 세션이 없는 서버 작업 전용) |
+| 환경변수 | `src/lib/supabase/env.ts` | `SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_STORAGE_BUCKET` / `SUPABASE_PROFILE_IMAGE_BUCKET` / `SUPABASE_PRODUCT_IMAGE_BUCKET` / `SUPABASE_STORAGE_URL` / `SUPABASE_SERVICE_ROLE_KEY`(없으면 null) |
 | Storage 주소 | `src/lib/supabase/storage.ts` | 경로 → 공개 URL 조립 (`publicStorageUrl`) |
 | DB 타입 | `src/lib/supabase/database.types.ts` | Supabase 생성 타입 (스키마 변경 시 재생성) |
-| 도메인 모듈 | `src/lib/auth.ts`, `src/lib/profile.ts`, `src/lib/places.ts`, `src/lib/placeSearch.ts`, `src/lib/reverseGeocode.ts` | 실제 쿼리는 여기에만 |
+| 도메인 모듈 | `src/lib/auth.ts`, `src/lib/profile.ts`, `src/lib/places.ts`, `src/lib/products.ts`, `src/lib/payments.ts`, `src/lib/placeSearch.ts`, `src/lib/reverseGeocode.ts` | 실제 쿼리는 여기에만 |
 | 클라이언트 세션 | `src/hooks/useSession.ts` | `/api/auth/session` 만 호출하는 로그인 상태 훅 |
 | 네이버 키 | `src/lib/naver/env.ts` | `naverSearchEnv`(`NAVER_SEARCH_CLIENT_ID`/`_SECRET`) · `naverMapsEnv`(`NAVER_MAP_CLIENT_SECRET`) — 모두 서버 전용 |
+| 포트원 키 | `src/lib/portone/env.ts` · `src/lib/portone/serverEnv.ts` | 공개 식별자 `portoneEnv`(`NEXT_PUBLIC_PORTONE_STORE_ID`/`_CHANNEL_KEY`) · 서버 전용 `portoneServerEnv`(`PORTONE_API_SECRET`/`PORTONE_WEBHOOK_SECRET`) — 규칙은 `.claude/rules/payment.md` |
 | 장소 선택 상태 | `src/lib/placeSelection.ts` | 장소 등록 ↔ 검색 화면이 주고받는 `name`/`addr`/`lat`/`lng` (순수 모듈) |
 | 게시글 초안 | `src/lib/placeDraft.ts` | 게시글 등록 ↔ 장소 등록 화면을 오갈 때 제목·내용·사진(`File`)·선택 장소를 붙들어 두는 메모리 보관소 |
 | 좌표 → 주소 | `src/hooks/useReverseGeocode.ts` | `/api/reverse-geocode` 만 호출하는 디바운스 조회 훅 |
 
-Route Handler: `/api/auth/google`(POST) · `/api/auth/callback`(GET) · `/api/auth/session`(GET·DELETE) · `/api/profile`(GET·PATCH) · `/api/places`(GET·POST) · `/api/places/[id]`(GET·PATCH·DELETE) · `/api/place-search`(GET) · `/api/reverse-geocode`(GET).
+Route Handler: `/api/auth/google`(POST) · `/api/auth/callback`(GET) · `/api/auth/session`(GET·DELETE) · `/api/profile`(GET·PATCH) · `/api/places`(GET·POST) · `/api/places/[id]`(GET·PATCH·DELETE) · `/api/products`(GET) · `/api/products/[id]`(GET) · `/api/place-search`(GET) · `/api/reverse-geocode`(GET) · `/api/portone/webhook`(POST — 포트원 웹훅 수신, 규칙은 `.claude/rules/payment.md`).
 
 - 새 도메인 추가 시: `src/lib/<domain>.ts`(서버 모듈) → `src/app/api/<domain>/route.ts`(얇은 핸들러) 순서.
 - `src/lib/posts.ts`는 디자인 목업 데이터다. 실데이터는 `src/lib/places.ts`(`place` 테이블)를 쓴다.
@@ -84,6 +85,11 @@ Route Handler: `/api/auth/google`(POST) · `/api/auth/callback`(GET) · `/api/au
 - `PATCH /api/places/[id]` 는 본인 글만 수정한다. 사진을 바꾸면 `multipart/form-data`(`keepImageIds` n개 + `images` n개 → 유지 + 신규로 교체), 글만 고치면 JSON(`{ title?, content?, location? }`). 지도 정보는 multipart 면 `name`/`address`/`lat`/`lng` 필드로, JSON 이면 `location` 객체로 보낸다.
 - `DELETE /api/places/[id]` 는 본인 글만 소프트 삭제한다(`{ id }` 반환). 이미 삭제된 글은 조회 단계에서 404 다. 마이페이지 `내가 쓴 글` 의 X 버튼 → 확인 모달이 진입점이다.
 - 폼 파싱 헬퍼는 `src/lib/api/form.ts` 에 모아 둔다(라우트는 값만 꺼내고 검증은 도메인 모듈이 한다).
+
+## 결제
+
+- 결제 관련 **모든** 규칙(포트원 결제창 연동·환경변수·웹훅·결제취소·결제 내역·상품/화면 흐름)은 `.claude/rules/payment.md` 가 **결제 SSOT** 다. 결제 코드를 만지기 전에 반드시 그 문서를 따르고, 규칙 변경도 그 문서에서만 한다.
+- 프로필 설정 영역은 항상 보이지 않고 닉네임 우측 연필 버튼으로 펼친다.
 
 ## 지도 정보 (필수값)
 

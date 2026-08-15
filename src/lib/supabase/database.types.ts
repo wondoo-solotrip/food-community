@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      payment: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          payment_snapshot_id: string
+          product_id: string
+          transaction_key: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          payment_snapshot_id: string
+          product_id: string
+          transaction_key: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_snapshot_id?: string
+          product_id?: string
+          transaction_key?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_payment_snapshot_id_fkey"
+            columns: ["payment_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "payment_snapshot"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_snapshot: {
+        Row: {
+          created_at: string
+          id: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       place: {
         Row: {
           address: string
@@ -81,6 +147,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      product: {
+        Row: {
+          address: string
+          capacity: number
+          created_at: string
+          description: string
+          event_at: string
+          id: string
+          image_path_detail: string
+          image_path_main: string
+          name: string
+          price: number
+          status: string
+        }
+        Insert: {
+          address: string
+          capacity: number
+          created_at?: string
+          description: string
+          event_at: string
+          id?: string
+          image_path_detail: string
+          image_path_main: string
+          name: string
+          price: number
+          status: string
+        }
+        Update: {
+          address?: string
+          capacity?: number
+          created_at?: string
+          description?: string
+          event_at?: string
+          id?: string
+          image_path_detail?: string
+          image_path_main?: string
+          name?: string
+          price?: number
+          status?: string
+        }
+        Relationships: []
       }
       profile: {
         Row: {

@@ -7,6 +7,7 @@ import { Empty } from '@/components/ui/Empty';
 import { FoodCard } from '@/components/ui/FoodCard';
 import { TextField } from '@/components/ui/TextField';
 import { listPlaces, type Place } from '@/lib/places';
+import { listProducts, type Product } from '@/lib/products';
 
 /**
  * 목록은 상세 페이지와 같은 방식으로 읽는다: Server Component 에서 서버 모듈 직접 호출.
@@ -21,9 +22,22 @@ async function loadPlaces(): Promise<{ places: Place[]; failed: boolean }> {
   }
 }
 
+/** 배너 상품 조회가 실패해도 화면 전체를 죽이지 않는다 — 배너만 숨긴다. */
+async function loadBannerProduct(): Promise<Product | null> {
+  try {
+    return (await listProducts())[0] ?? null;
+  } catch (error) {
+    console.error('[main] 상품 배너 조회 실패', error);
+    return null;
+  }
+}
+
 /** design.pen `01 Main Page` — 모바일 2열 → 태블릿 3열 → 데스크톱 4열(최대 1280px) 카드 그리드. */
 export default async function MainPage() {
-  const { places, failed } = await loadPlaces();
+  const [{ places, failed }, bannerProduct] = await Promise.all([
+    loadPlaces(),
+    loadBannerProduct(),
+  ]);
 
   return (
     <div className="flex min-h-dvh flex-1 flex-col bg-background-screen">
@@ -39,6 +53,22 @@ export default async function MainPage() {
             leadingIcon="search"
           />
         </div>
+
+        {/* Paid Event Banner — 최신 공개 상품의 배너 이미지(image_path_main) 한 장을 통짜로 채운다.
+            문구·CTA 는 이미지에 포함돼 있다. 원본은 2:1 비율이라 그대로 두되, 넓은 화면에서
+            지나치게 커지지 않게 높이를 320px 에서 멈추고 가운데를 남기며 자른다. */}
+        {bannerProduct && (
+          <Link
+            href={`/events/${bannerProduct.id}`}
+            aria-label={`${bannerProduct.name} 모임 상세 보기`}
+            className="block w-full overflow-hidden rounded-xl bg-brand-100"
+          >
+            <div
+              className="aspect-[2/1] max-h-80 w-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${bannerProduct.bannerImageUrl})` }}
+            />
+          </Link>
+        )}
 
         {/* Popular Section */}
         <section className="flex flex-col gap-6">
