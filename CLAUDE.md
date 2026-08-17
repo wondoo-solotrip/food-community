@@ -70,7 +70,7 @@ Storybook = 디자인 SSOT.
 | 게시글 초안 | `src/lib/placeDraft.ts` | 게시글 등록 ↔ 장소 등록 화면을 오갈 때 제목·내용·사진(`File`)·선택 장소를 붙들어 두는 메모리 보관소 |
 | 좌표 → 주소 | `src/hooks/useReverseGeocode.ts` | `/api/reverse-geocode` 만 호출하는 디바운스 조회 훅 |
 
-Route Handler: `/api/auth/google`(POST) · `/api/auth/callback`(GET) · `/api/auth/session`(GET·DELETE) · `/api/profile`(GET·PATCH) · `/api/places`(GET·POST) · `/api/places/[id]`(GET·PATCH·DELETE) · `/api/products`(GET) · `/api/products/[id]`(GET) · `/api/place-search`(GET) · `/api/reverse-geocode`(GET) · `/api/portone/webhook`(POST — 포트원 웹훅 수신, 규칙은 `.claude/rules/payment.md`).
+Route Handler: `/api/auth/google`(POST) · `/api/auth/callback`(GET) · `/api/auth/session`(GET·DELETE) · `/api/profile`(GET·PATCH) · `/api/places`(GET·POST) · `/api/places/[id]`(GET·PATCH·DELETE) · `/api/products`(GET) · `/api/products/[id]`(GET) · `/api/place-search`(GET) · `/api/reverse-geocode`(GET) · `/api/portone/webhook`(POST — 포트원 웹훅 수신, 규칙은 `.claude/rules/payment.md`) · `/api/payments`(GET — 내 결제 내역, 로그인 필수, 규칙은 `.claude/rules/payment.md`) · `/api/payments/cancellations`(GET — 내 취소 내역, 로그인 필수, 규칙은 `.claude/rules/payment.md`) · `/api/payments/[transactionKey]/cancel`(POST — 본인 결제 전액취소, 로그인 필수, 규칙은 `.claude/rules/payment.md`).
 
 - 새 도메인 추가 시: `src/lib/<domain>.ts`(서버 모듈) → `src/app/api/<domain>/route.ts`(얇은 핸들러) 순서.
 - `src/lib/posts.ts`는 디자인 목업 데이터다. 실데이터는 `src/lib/places.ts`(`place` 테이블)를 쓴다.

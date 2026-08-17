@@ -3,17 +3,18 @@
 결제와 관련된 **모든** 규칙(결제창 연동·환경변수·웹훅·결제 원장·결제취소·결제 내역·참여자 수)은 이 문서가 유일한 기준이다.
 결제 코드를 추가·수정하기 전에 반드시 이 문서를 따르고, 규칙이 바뀌면 이 문서를 먼저 고친다.
 
-## 현재 범위 (v1.3 — 웹훅 + 결제 원장 실기록)
+## 현재 범위 (v1.6 — 취소 내역 원장 실데이터)
 
 | 영역 | 상태 |
 | --- | --- |
 | 상품 조회 | `product` 테이블 실데이터 (`src/lib/products.ts`) |
 | 결제창 | **포트원 V2 실연동** — 카드(`CARD`) · 원화(`KRW`) 일반결제 |
-| 웹훅 | **실연동** — `/api/portone/webhook` 서명 검증 + 단건조회 재확인 |
+| 웹훅 | **실연동** — `/api/portone/webhook` 서명 검증 + 단건조회 재확인 (결제·취소 웹훅 공통 수신점) |
 | 결제 기록 | **`payment` 테이블 실기록** (insert-only 원장, `src/lib/payments.ts`) |
 | 참여자 수 | 원장 집계 — PAYMENT − CANCEL 행 수 |
-| 결제취소 | `src/lib/paidEvents.ts` 메모리 목업 — 포트원 취소 API 미호출 |
-| 결제·취소 내역 화면 | `src/lib/paidEvents.ts` 메모리 목업 (원장 미반영) |
+| 결제 내역 화면 | **원장 실데이터** — `GET /api/payments` (`listPaymentHistory`) |
+| 결제취소 | **포트원 취소 API 실연동** — `POST /api/payments/[transactionKey]/cancel` (전액취소, `cancelEventPayment`) |
+| 취소 내역 화면 | **원장 실데이터** — `GET /api/payments/cancellations` (`listCancelHistory`, 웹훅·앱 내 취소 모두 반영) |
 
 ## 포트원 결제창 (V2 브라우저 SDK)
 
@@ -54,6 +55,24 @@
 - RLS: `payment` · `payment_snapshot` 은 정책 없이 닫혀 있다. 웹훅은 사용자 세션이 없으므로 서비스 롤 클라이언트(`createSupabaseAdminClient`, `SUPABASE_SERVICE_ROLE_KEY`)로만 쓴다. 서비스 롤은 사용자 세션이 없는 서버 작업에만 쓰고, 요청 사용자 권한으로 처리할 수 있는 곳에는 쓰지 않는다.
 - **참여자 수 = 해당 상품의 PAYMENT 행 수 − CANCEL 행 수**(`countParticipants`). 서비스 키 미설정이면 0 으로 접고 경고 로그만 남긴다(서버가 죽지 않게 하는 네이버 키 방식).
 
+## 결제 내역 조회 (`GET /api/payments`)
+
+- 마이페이지 `결제 내역` 탭의 데이터 소스다. **로그인 필수**(`requireUser`) — 본인 결제 건만 내려간다.
+- 조회 코드는 `src/lib/payments.ts` 의 `listPaymentHistory(userId)` **한 곳**에만 둔다. `payment` · `payment_snapshot` 은 RLS 정책 없이 닫혀 있어 기록과 마찬가지로 서비스 롤(`createSupabaseAdminClient`)로 읽고, `userId` 필터는 세션에서 검증된 값으로 서버가 건다(클라이언트 입력을 받지 않는다).
+- **취소된 결제는 제외한다**: 같은 `transaction_key` 에 CANCEL 행이 있는 PAYMENT 행은 결제 내역에 나오지 않는다(전액취소뿐이라 "취소 안 된 결제 건" = 결제 내역). 정렬은 최신 결제 순(`created_at` 내림차순).
+- 화면 값은 `payment_snapshot.snapshot_product`(결제 시점 상품)로 만든다 — 상품이 나중에 바뀌어도 결제 내역은 결제 시점 값을 보여준다. `snapshot_payment` 원본은 민감값이 있어 클라이언트에 내리지 않고, 화면에 필요한 필드만 뷰 모델 `PaymentHistoryItem`(dateLabel·title·place·amount·imageUrl·transactionKey)로 추려 내린다.
+- 날짜 표기('2026. 08. 23 (일) · 14:00')는 `src/lib/eventFormat.ts` 의 `eventHistoryDateLabel` 로 서버에서 만들어 내린다. 이미지 주소는 스냅샷의 `image_path_main` 을 `publicStorageUrl` 로 조립한다.
+- 서비스 키 미설정이면 빈 목록으로 접고 경고 로그만 남긴다(참여자 수와 같은 방식).
+
+## 취소 내역 조회 (`GET /api/payments/cancellations`)
+
+- 마이페이지 `취소 내역` 탭의 데이터 소스다. **로그인 필수**(`requireUser`) — 본인 취소 건만 내려간다.
+- 조회 코드는 `src/lib/payments.ts` 의 `listCancelHistory(userId)` **한 곳**에만 둔다. 결제 내역과 마찬가지로 서비스 롤(`createSupabaseAdminClient`)로 읽고, `userId` 필터는 세션에서 검증된 값으로 서버가 건다.
+- **취소 내역 = 내 CANCEL 행**(전액취소뿐이라 취소 건당 CANCEL 행 1개). 정렬은 최신 취소 순(`created_at` 내림차순). 앱 안 결제취소든 앱 밖(포트원 콘솔) 취소든 원장에 CANCEL 행이 기록되는 순간(취소 직후 동기화 또는 `Transaction.Cancelled` 웹훅) 똑같이 나타난다.
+- 화면 값은 CANCEL 행이 가리키는 스냅샷으로 만든다: 상품 표기(제목·모임 일시·이미지)는 `snapshot_product`, 환불 수단(`method`)·취소 시각(`cancelledAt`)은 `snapshot_payment`(취소 시점 단건조회 원본 = `CancelledPayment`)에서 **필요한 필드만** 추린다 — 원본은 민감값이 있어 클라이언트에 내리지 않는다. 환불 금액은 CANCEL 행 `amount` 의 절대값이다.
+- 뷰 모델은 `CancellationHistoryItem`(dateLabel·title·method·refundAmount·imageUrl·requestedAtLabel·transactionKey). 취소 접수일 표기('2026. 07. 12')는 `src/lib/eventFormat.ts` 의 `cancelRequestedDateLabel` 로 서버에서 만들고, `cancelledAt` 이 비어 있으면 원장 행 `created_at` 으로 접는다.
+- 서비스 키 미설정이면 빈 목록으로 접고 경고 로그만 남긴다(결제 내역과 같은 방식).
+
 ## 환경변수
 
 - `NEXT_PUBLIC_PORTONE_STORE_ID` / `NEXT_PUBLIC_PORTONE_CHANNEL_KEY` — 결제창 식별자. 비밀값이 아니라서(포트원 콘솔 > 결제연동 > 연동 정보) 예외적으로 `NEXT_PUBLIC_` 을 쓴다. 접근은 `src/lib/portone/env.ts` 로만. 키가 없으면 null → 결제 버튼이 안내 Toast 로 알린다.
@@ -61,11 +80,17 @@
 - `SUPABASE_SERVICE_ROLE_KEY` — 원장 기록·참여자 수 집계용 서비스 롤 키. 서버 전용.
 - 테스트 채널 → 실결제 채널 전환은 코드가 아니라 env 값만 바꾼다. 웹훅 시크릿은 테스트/실연동 모드별로 따로 발급된다.
 
-## 결제취소
+## 결제취소 (`POST /api/payments/[transactionKey]/cancel`)
 
-- 마이페이지 `결제 취소` 는 확인 모달 → `src/lib/paidEvents.ts` 의 `cancelPayment` 로 **메모리에서** 옮길 뿐이다. 포트원 취소 API 는 호출하지 않는다. 새로고침하면 초기 목업으로 돌아온다.
-- 단, 포트원 콘솔 등에서 **전액취소가 실제로 일어나면** `Transaction.Cancelled` 웹훅이 원장에 CANCEL 행을 기록하고 참여자 수에서 빠진다.
-- 실 취소를 붙일 때: BFF(서버)에서 `POST https://api.portone.io/payments/{paymentId}/cancel` 을 `Authorization: PortOne {PORTONE_API_SECRET}` 인증으로 호출한다. 브라우저에서 직접 호출 금지. 부분취소는 열지 않는다(열려면 원장 부호 규칙부터 이 문서에서 다시 정한다).
+- 진입점은 마이페이지 `결제 취소` 버튼 → 확인 모달 → 이 라우트 하나다. **로그인 필수**(`requireUser`).
+- 취소 로직은 `src/lib/payments.ts` 의 `cancelEventPayment(userId, transactionKey)` **한 곳**에만 둔다. BFF(서버)에서 `@portone/server-sdk` 의 `payment.cancelPayment`(= `POST https://api.portone.io/payments/{paymentId}/cancel`, `PORTONE_API_SECRET` 인증)를 호출한다. 브라우저에서 직접 호출 금지.
+- **전액취소만** 한다: `amount` 를 보내지 않아 전액이 취소된다. `reason` 은 `'구매자 요청 전액 취소'`, `requester: 'CUSTOMER'` 고정. 부분취소는 열지 않는다(열려면 원장 부호 규칙부터 이 문서에서 다시 정한다).
+- **소유 검증**: 포트원 호출 전에 원장에서 본인(`user_id`) 소유 PAYMENT 행을 확인한다. 남의 결제 건·모르는 건은 존재 여부도 알리지 않고 404, 원장에 이미 CANCEL 행이 있으면 409(`ALREADY_CANCELLED`)다.
+- **취소 후 원장 즉시 동기화**: 취소 성공 시 웹훅을 기다리지 않고 `syncPaymentLedger`(단건조회 재확인)로 CANCEL 행을 바로 기록한다 — 결제 내역·참여자 수가 즉시 갱신된다. 이후 `Transaction.Cancelled` 웹훅이 도착해도 원장 기록은 멱등이라 중복되지 않는다.
+- 포트원이 `PAYMENT_ALREADY_CANCELLED` 를 돌려주면(콘솔에서 먼저 취소한 경우 등) 실패로 끊지 않고 동기화로 이어 원장에 CANCEL 행을 채운다. 그 외 취소 실패는 502(`CANCEL_FAILED`)로 정규화하고 원장은 건드리지 않는다.
+- 서비스 키(`SUPABASE_SERVICE_ROLE_KEY`) 미설정이면 소유 확인·기록이 불가능하므로 조회처럼 접지 않고 503(`SERVICE_UNAVAILABLE`)으로 명시적으로 실패시킨다.
+- 앱 밖(포트원 콘솔 등)에서 전액취소가 일어나는 경로는 그대로 유지된다 — `Transaction.Cancelled` 웹훅이 원장에 CANCEL 행을 기록한다.
+- 취소된 결제는 결제 내역에서 빠지고(위 결제 내역 조회 규칙), 취소 내역에 나타난다(위 취소 내역 조회 규칙).
 
 ## 화면 흐름·상품 규칙
 
@@ -75,11 +100,10 @@
 - 모임 일시(`event_at`)는 UTC 로 저장되고 표기는 항상 KST — 날짜·금액 표기는 `src/lib/eventFormat.ts`(순수 모듈)에서만 만든다.
 - 화면: 메인 상단 배너(`/` → `/events/[id]`, 최신 공개 상품 1건) → 모임 상세 + 결제 바텀시트(`/events/[id]`) → 포트원 결제창 → 결제 완료(`/events/[id]/complete`) → 마이페이지 `결제 내역` 탭(`/mypage?tab=payments`). 상세·완료 페이지는 Server Component 가 `getProduct` 로 읽어 표기까지 끝낸 뷰 모델을 클라이언트 뷰에 넘긴다.
 - 메인 배너는 `image_path_main` 이미지 한 장을 통짜로 채운다(2:1 비율, 최대 높이 320px 가운데 크롭). 정원 게이지는 `src/components/ui/ProgressBar.tsx`.
-- 정원이 다 차면(`remaining <= 0`) 결제 버튼이 비활성화된다(PRD v1.1). 참여자 수는 원장 집계라 웹훅이 도착해야 갱신된다.
-- 마이페이지 탭은 `?tab=posts|payments|cancellations` 로 딥링크한다. 결제·취소 내역은 아직 `src/lib/paidEvents.ts` 목업이다 — 실제 결제 건은 내역 화면에 나타나지 않는다.
+- 정원이 다 차면(`remaining <= 0`) 결제 버튼이 비활성화된다(PRD v1.1). 참여자 수는 원장 집계다 — 결제는 웹훅이 도착해야 갱신되고, 앱 내 결제취소는 취소 직후 동기화로 바로 반영된다.
+- 마이페이지 탭은 `?tab=posts|payments|cancellations` 로 딥링크한다. 결제 내역은 원장 실데이터(`GET /api/payments`, 위 결제 내역 조회 규칙)이고, `결제 취소` 버튼은 확인 모달을 거쳐 취소 라우트를 호출한다(위 결제취소 규칙). 취소 내역도 원장 실데이터(`GET /api/payments/cancellations`, 위 취소 내역 조회 규칙)다 — 앱 내 취소 직후와 취소 웹훅 도착 시 모두 반영되며, `paidEvents.ts` 목업은 제거됐다.
 
 ## 향후 작업
 
-- 결제 완료 페이지·마이페이지 결제/취소 내역을 원장(`payment`) 실데이터로 교체(`paidEvents.ts` 목업 제거).
-- 마이페이지 `결제 취소` 를 포트원 취소 API 실호출로 교체(BFF 경유, 위 결제취소 규칙).
+- 결제 완료 페이지를 원장(`payment`) 실데이터로 교체. 마이페이지 결제·취소 내역 탭은 교체 완료(v1.4·v1.6).
 - 완료 페이지에서 `paymentId` 로 원장/단건조회를 확인해 "결제 확인 중 → 확정" 상태 표기(웹훅 도착 전 새로고침 대비).

@@ -62,6 +62,18 @@ export function eventScheduleLabel(eventAt: string): string {
   return `${year}. ${pad(month)}. ${pad(day)} (${weekday}) ${pad(hour)}:${pad(minute)}`;
 }
 
+/** 마이페이지 결제·취소 내역 카드 상단 — '2026. 08. 23 (일) · 14:00' */
+export function eventHistoryDateLabel(eventAt: string): string {
+  const { year, month, day, weekday, hour, minute } = toEventDateParts(eventAt);
+  return `${year}. ${pad(month)}. ${pad(day)} (${weekday}) · ${pad(hour)}:${pad(minute)}`;
+}
+
+/** 마이페이지 취소 내역의 '취소 접수' 행 — '2026. 07. 12' (취소 시각 기준) */
+export function cancelRequestedDateLabel(cancelledAt: string): string {
+  const { year, month, day } = toEventDateParts(cancelledAt);
+  return `${year}. ${pad(month)}. ${pad(day)}`;
+}
+
 /** 메인 배너 캡션의 날짜 조각 — '8.8 (토)' */
 export function eventShortDateLabel(eventAt: string): string {
   const { month, day, weekday } = toEventDateParts(eventAt);

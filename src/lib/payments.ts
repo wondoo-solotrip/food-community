@@ -2,10 +2,13 @@ import 'server-only';
 
 import * as PortOne from '@portone/server-sdk';
 
+import { ApiError, badRequest, notFound } from '@/lib/api/response';
+import { cancelRequestedDateLabel, eventHistoryDateLabel } from '@/lib/eventFormat';
 import { portoneServerEnv } from '@/lib/portone/serverEnv';
 import type { Json } from '@/lib/supabase/database.types';
 import { supabaseEnv } from '@/lib/supabase/env';
 import { createSupabaseAdminClient } from '@/lib/supabase/server';
+import { publicStorageUrl } from '@/lib/supabase/storage';
 
 /**
  * 결제 원장(payment 테이블) 도메인 모듈 — 결제 규칙 SSOT: .claude/rules/payment.md
@@ -90,6 +93,54 @@ export async function syncPaymentLedger(paymentId: string): Promise<void> {
     default:
       return;
   }
+}
+
+/**
+ * 결제취소(전액) — 마이페이지 `결제 취소` 버튼의 서버 로직. BFF 라우트에서만 호출한다.
+ * 1) 원장에서 본인 소유 PAYMENT 행인지 확인한다(남의 결제 건은 존재도 알리지 않고 404).
+ * 2) 포트원 취소 API 를 전액취소로 호출한다(`amount` 미지정 = 전액).
+ * 3) 취소 웹훅을 기다리지 않고 syncPaymentLedger 로 CANCEL 행을 즉시 기록한다 —
+ *    웹훅이 나중에 도착해도 원장 기록은 멱등이라 중복되지 않는다.
+ */
+export async function cancelEventPayment(userId: string, transactionKey: string): Promise<void> {
+  if (!UUID_PATTERN.test(transactionKey)) {
+    throw badRequest('결제 건 정보가 올바르지 않습니다.');
+  }
+  // 서비스 키가 없으면 소유 확인도 취소 기록도 불가능하다 — 조회처럼 접지 않고 명시적으로 실패시킨다.
+  if (!supabaseEnv.serviceRoleKey) {
+    console.warn('[payments] SUPABASE_SERVICE_ROLE_KEY 미설정 — 결제 취소를 처리할 수 없습니다.');
+    throw new ApiError('SERVICE_UNAVAILABLE', '지금은 결제를 취소할 수 없습니다.', 503);
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { data: rows, error } = await supabase
+    .from('payment')
+    .select('type, user_id')
+    .eq('transaction_key', transactionKey);
+  if (error) throw error;
+
+  const owned = rows.some((row) => row.type === 'PAYMENT' && row.user_id === userId);
+  if (!owned) throw notFound('결제 내역을 찾을 수 없습니다.');
+  if (rows.some((row) => row.type === 'CANCEL')) {
+    throw new ApiError('ALREADY_CANCELLED', '이미 취소된 결제입니다.', 409);
+  }
+
+  try {
+    await portoneClient().payment.cancelPayment({
+      paymentId: transactionKey,
+      reason: '구매자 요청 전액 취소',
+      requester: 'CUSTOMER',
+    });
+  } catch (cause) {
+    if (!(cause instanceof PortOne.Payment.CancelPaymentError)) throw cause;
+    // 원장엔 없는데 포트원에선 이미 취소된 건(콘솔 취소 등) — 아래 동기화가 CANCEL 행을 채우면 되므로 성공으로 잇는다.
+    if (cause.data.type !== 'PAYMENT_ALREADY_CANCELLED') {
+      console.error('[payments] 포트원 결제취소 실패', transactionKey, cause.data.type);
+      throw new ApiError('CANCEL_FAILED', '결제 취소에 실패했습니다.', 502);
+    }
+  }
+
+  await syncPaymentLedger(transactionKey);
 }
 
 /** customData 를 되읽어 형식을 검증한다. 없거나 어긋나면 null — 위조 의심이라 기록하지 않는다. */
@@ -221,4 +272,143 @@ export async function countParticipants(productId: string): Promise<number> {
   if (cancelled.error) throw cancelled.error;
 
   return (paid.count ?? 0) - (cancelled.count ?? 0);
+}
+
+/** 마이페이지 결제 내역 카드 뷰 모델 — 스냅샷 원본은 내리지 않고 표기까지 만들어 내린다. */
+export interface PaymentHistoryItem {
+  /** 원장 PAYMENT 행 id */
+  id: string;
+  /** 포트원 paymentId — 결제취소 API 를 붙일 때 이 값으로 취소한다. */
+  transactionKey: string;
+  /** '2026. 08. 23 (일) · 14:00' — 결제 시점 스냅샷의 모임 일시 */
+  dateLabel: string;
+  title: string;
+  place: string;
+  amount: number;
+  imageUrl: string;
+}
+
+/** `snapshot_product` 에서 화면이 쓰는 필드 — 결제 시점의 `product` 행이라 형태가 같다. */
+type ProductSnapshot = {
+  name: string;
+  event_at: string;
+  address: string;
+  image_path_main: string;
+};
+
+/**
+ * 내 결제 내역 = 내 PAYMENT 행 중 같은 transaction_key 에 CANCEL 행이 없는 것(최신 결제 순).
+ * 화면 값은 결제 시점 상품 스냅샷(snapshot_product)으로 만든다 — 상품이 나중에 바뀌어도 그대로다.
+ * payment 는 RLS 정책 없이 닫혀 있어 서비스 롤로 읽고, userId 는 세션에서 검증된 값만 받는다.
+ * 서비스 키가 없으면 빈 목록으로 접는다 — countParticipants 와 같은 방식.
+ */
+export async function listPaymentHistory(userId: string): Promise<PaymentHistoryItem[]> {
+  if (!supabaseEnv.serviceRoleKey) {
+    console.warn('[payments] SUPABASE_SERVICE_ROLE_KEY 미설정 — 결제 내역을 빈 목록으로 표시합니다.');
+    return [];
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('payment')
+    .select('id, created_at, transaction_key, type, amount, payment_snapshot ( snapshot_product )')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  const cancelledKeys = new Set(
+    data.filter((row) => row.type === 'CANCEL').map((row) => row.transaction_key),
+  );
+
+  return data
+    .filter((row) => row.type === 'PAYMENT' && !cancelledKeys.has(row.transaction_key))
+    .map((row) => {
+      const product = row.payment_snapshot.snapshot_product as unknown as ProductSnapshot;
+      return {
+        id: row.id,
+        transactionKey: row.transaction_key,
+        dateLabel: eventHistoryDateLabel(product.event_at),
+        title: product.name,
+        place: product.address,
+        amount: Number(row.amount),
+        imageUrl: publicStorageUrl(supabaseEnv.productImageBucket, product.image_path_main),
+      };
+    });
+}
+
+/** 마이페이지 취소 내역 카드 뷰 모델 — 결제 내역과 마찬가지로 표기까지 만들어 내린다. */
+export interface CancellationHistoryItem {
+  /** 원장 CANCEL 행 id */
+  id: string;
+  /** 포트원 paymentId — 취소된 결제 건의 그룹 키 */
+  transactionKey: string;
+  /** '2026. 08. 23 (일) · 14:00' — 결제 시점 스냅샷의 모임 일시 */
+  dateLabel: string;
+  title: string;
+  /** 환불 수단 표기 — 취소 시점 스냅샷의 결제수단 */
+  method: string;
+  /** 환불 금액(양수) — CANCEL 행 amount 의 절대값 */
+  refundAmount: number;
+  imageUrl: string;
+  /** 취소 접수일 — '2026. 07. 12' */
+  requestedAtLabel: string;
+}
+
+/**
+ * `snapshot_payment`(취소 시점 단건조회 원본 = CancelledPayment) 중 취소 내역 화면이 쓰는 필드.
+ * 원본에는 PG 민감값이 있어 여기서 추린 값만 클라이언트로 내린다.
+ */
+type CancelledPaymentSnapshot = {
+  method?: { type?: string };
+  cancelledAt?: string;
+};
+
+/** 결제수단 표기 — 결제창은 카드 고정(payment.md)이라 스냅샷 값이 비면 '카드' 로 접는다. */
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  PaymentMethodCard: '카드',
+  PaymentMethodEasyPay: '간편결제',
+  PaymentMethodTransfer: '계좌이체',
+  PaymentMethodVirtualAccount: '가상계좌',
+  PaymentMethodMobile: '휴대폰결제',
+};
+
+/**
+ * 내 취소 내역 = 내 CANCEL 행(전액취소뿐이라 취소 건당 1행, 최신 취소 순).
+ * 앱 안 취소(취소 직후 동기화)든 앱 밖 취소(`Transaction.Cancelled` 웹훅)든
+ * 원장에 CANCEL 행이 기록되는 순간 똑같이 나타난다.
+ * 상품 표기는 snapshot_product, 환불 수단·취소 시각은 snapshot_payment 에서 추린다.
+ * 서비스 키가 없으면 빈 목록으로 접는다 — listPaymentHistory 와 같은 방식.
+ */
+export async function listCancelHistory(userId: string): Promise<CancellationHistoryItem[]> {
+  if (!supabaseEnv.serviceRoleKey) {
+    console.warn('[payments] SUPABASE_SERVICE_ROLE_KEY 미설정 — 취소 내역을 빈 목록으로 표시합니다.');
+    return [];
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('payment')
+    .select(
+      'id, created_at, transaction_key, amount, payment_snapshot ( snapshot_payment, snapshot_product )',
+    )
+    .eq('user_id', userId)
+    .eq('type', 'CANCEL')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  return data.map((row) => {
+    const product = row.payment_snapshot.snapshot_product as unknown as ProductSnapshot;
+    const payment = row.payment_snapshot.snapshot_payment as unknown as CancelledPaymentSnapshot;
+    return {
+      id: row.id,
+      transactionKey: row.transaction_key,
+      dateLabel: eventHistoryDateLabel(product.event_at),
+      title: product.name,
+      method: PAYMENT_METHOD_LABELS[payment.method?.type ?? ''] ?? '카드',
+      refundAmount: Math.abs(Number(row.amount)),
+      imageUrl: publicStorageUrl(supabaseEnv.productImageBucket, product.image_path_main),
+      // CANCEL 행의 스냅샷은 CancelledPayment 라 cancelledAt 이 항상 있지만, 혹시 비면 기록 시각으로 접는다.
+      requestedAtLabel: cancelRequestedDateLabel(payment.cancelledAt ?? row.created_at),
+    };
+  });
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -19,13 +19,7 @@ import { Toast } from '@/components/ui/Toast';
 import { useSession } from '@/hooks/useSession';
 import { apiFetch } from '@/lib/api/client';
 import { formatWon } from '@/lib/eventFormat';
-import {
-  cancelPayment,
-  listCancellations,
-  listPayments,
-  type CancellationRecord,
-  type PaymentRecord,
-} from '@/lib/paidEvents';
+import type { CancellationHistoryItem, PaymentHistoryItem } from '@/lib/payments';
 import type { Place } from '@/lib/places';
 import type { Profile } from '@/lib/profile';
 
@@ -57,13 +51,13 @@ function MyPageContent() {
   const [deleteTarget, setDeleteTarget] = useState<Place | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
-  /** 결제/취소 내역은 목업 모듈 상태의 사본이다 — 취소하면 다시 읽어온다. */
-  const [payments, setPayments] = useState<PaymentRecord[]>(() => listPayments());
-  const [cancellations, setCancellations] = useState<CancellationRecord[]>(() =>
-    listCancellations(),
-  );
-  /** 결제 취소 확인 모달의 대상 결제. null 이면 모달을 닫는다. */
-  const [cancelTarget, setCancelTarget] = useState<PaymentRecord | null>(null);
+  /** 결제 내역은 원장 실데이터(/api/payments)다. null = 아직 읽어오기 전. */
+  const [payments, setPayments] = useState<PaymentHistoryItem[] | null>(null);
+  /** 결제취소 확인 모달의 대상 결제 건. null 이면 모달을 닫는다. */
+  const [cancelTarget, setCancelTarget] = useState<PaymentHistoryItem | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  /** 취소 내역은 원장 CANCEL 행 실데이터(/api/payments/cancellations)다. null = 아직 읽어오기 전. */
+  const [cancellations, setCancellations] = useState<CancellationHistoryItem[] | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const user = session?.user ?? null;
@@ -83,6 +77,28 @@ function MyPageContent() {
       .then(({ places }) => setPlaces(places))
       .catch(() => setPlaces([]));
   }, [user]);
+
+  // 결제 내역 — 원장 실데이터(취소되지 않은 내 PAYMENT 행). 규칙: .claude/rules/payment.md
+  useEffect(() => {
+    if (!user) return;
+    apiFetch<{ payments: PaymentHistoryItem[] }>('/api/payments')
+      .then(({ payments }) => setPayments(payments))
+      .catch(() => setPayments([]));
+  }, [user]);
+
+  // 취소 내역 — 원장 CANCEL 행 실데이터. 결제취소 직후에도 다시 불러 바로 반영한다.
+  const loadCancellations = useCallback(
+    () =>
+      apiFetch<{ cancellations: CancellationHistoryItem[] }>('/api/payments/cancellations')
+        .then(({ cancellations: items }) => setCancellations(items))
+        .catch(() => setCancellations([])),
+    [],
+  );
+
+  useEffect(() => {
+    if (!user) return;
+    void loadCancellations();
+  }, [user, loadCancellations]);
 
   // 미리보기 objectURL 은 파일이 바뀌거나 화면을 떠날 때 해제한다.
   useEffect(
@@ -149,15 +165,31 @@ function MyPageContent() {
     }
   };
 
-  /** 결제 취소 — 목업 모듈에서 결제 내역을 빼서 취소 내역으로 옮긴다. */
-  const handleCancelPayment = () => {
-    if (!cancelTarget) return;
+  /** 포트원 전액취소(BFF 경유) — 성공하면 원장에서 빠지므로 목록에서도 제거한다. 규칙: .claude/rules/payment.md */
+  const handleCancelPayment = async () => {
+    if (!cancelTarget || cancelling) return;
 
-    cancelPayment(cancelTarget.id);
-    setPayments(listPayments());
-    setCancellations(listCancellations());
-    setCancelTarget(null);
-    setToast({ type: 'success', message: '결제를 취소했어요. 취소 내역에서 확인할 수 있어요.' });
+    setCancelling(true);
+    try {
+      await apiFetch<{ transactionKey: string }>(
+        `/api/payments/${cancelTarget.transactionKey}/cancel`,
+        { method: 'POST' },
+      );
+      setPayments(
+        (current) => current?.filter((payment) => payment.id !== cancelTarget.id) ?? current,
+      );
+      // 취소 직후 원장 동기화(payment.md)로 CANCEL 행이 이미 기록됐다 — 취소 내역 탭도 바로 갱신한다.
+      void loadCancellations();
+      setCancelTarget(null);
+      setToast({ type: 'success', message: '결제를 취소했어요. 환불까지 3~5일 걸릴 수 있어요.' });
+    } catch (cause) {
+      setToast({
+        type: 'error',
+        message: cause instanceof Error ? cause.message : '결제를 취소하지 못했어요.',
+      });
+    } finally {
+      setCancelling(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -371,9 +403,11 @@ function MyPageContent() {
               <Typography variant="heading-sm" as="h2" className="font-bold">
                 결제 내역
               </Typography>
-              <span className="text-label-md text-text-muted">{payments.length}건</span>
+              <span className="text-label-md text-text-muted">{payments?.length ?? 0}건</span>
             </div>
-            {payments.length === 0 ? (
+            {payments === null ? (
+              <Skeleton type="rectangle" height={120} />
+            ) : payments.length === 0 ? (
               <Empty
                 visualIcon="calendar"
                 title="결제 내역이 없어요"
@@ -405,10 +439,12 @@ function MyPageContent() {
                         </div>
                       </div>
                     </div>
+                    {/* 결제취소 진입점 — 확인 모달을 거쳐 POST /api/payments/:transactionKey/cancel 을 호출한다. */}
                     <Button
                       variant="destructive"
                       label="결제 취소"
                       className="w-full"
+                      disabled={cancelling}
                       onClick={() => setCancelTarget(payment)}
                     />
                   </li>
@@ -425,9 +461,11 @@ function MyPageContent() {
               <Typography variant="heading-sm" as="h2" className="font-bold">
                 취소 내역
               </Typography>
-              <span className="text-label-md text-text-muted">{cancellations.length}건</span>
+              <span className="text-label-md text-text-muted">{cancellations?.length ?? 0}건</span>
             </div>
-            {cancellations.length === 0 ? (
+            {cancellations === null ? (
+              <Skeleton type="rectangle" height={120} />
+            ) : cancellations.length === 0 ? (
               <Empty
                 visualIcon="refresh"
                 title="취소 내역이 없어요"
@@ -509,6 +547,24 @@ function MyPageContent() {
 
       <AppBottomNav selectedIndex={1} />
 
+      {/* 결제취소 확인 — 삭제 확인과 같은 오버레이 패턴. 취소는 전액 환불이라 확인을 한 번 거친다. */}
+      {cancelTarget && (
+        <div className="fixed inset-0 z-50 flex">
+          <Modal
+            title="이 결제를 취소할까요?"
+            description={`'${cancelTarget.title}' 결제 금액 ${formatWon(cancelTarget.amount)}이 전액 환불됩니다.`}
+            className="h-full px-5"
+            primaryLabel={cancelling ? '취소 중…' : '결제 취소'}
+            onPrimaryClick={handleCancelPayment}
+            secondaryLabel="닫기"
+            onSecondaryClick={() => setCancelTarget(null)}
+            onClose={() => {
+              if (!cancelling) setCancelTarget(null);
+            }}
+          />
+        </div>
+      )}
+
       {/* 삭제 확인 — DS Modal 은 relative 컨테이너 기준이라 화면 전체 오버레이로 감싼다. */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex">
@@ -527,21 +583,6 @@ function MyPageContent() {
         </div>
       )}
 
-      {/* 결제 취소 확인 — 확인해야 목업 내역이 취소 내역으로 옮겨간다. */}
-      {cancelTarget && (
-        <div className="fixed inset-0 z-50 flex">
-          <Modal
-            title="결제를 취소할까요?"
-            description={`'${cancelTarget.title}' 결제가 취소되고 ${formatWon(cancelTarget.amount)}이 환불됩니다.`}
-            className="h-full px-5"
-            primaryLabel="결제 취소"
-            onPrimaryClick={handleCancelPayment}
-            secondaryLabel="돌아가기"
-            onSecondaryClick={() => setCancelTarget(null)}
-            onClose={() => setCancelTarget(null)}
-          />
-        </div>
-      )}
     </div>
   );
 }
